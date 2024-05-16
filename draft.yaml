@@ -1,0 +1,23 @@
+models:
+  UsersRole:
+    role_type: string:20
+    role_name: string:20
+
+  Posts:
+    title: string:20
+    body: text
+    status: boolean
+    user_id: id
+    thumbnail: text
+
+  Comments:
+    body: text
+    user_id: id
+    post_id: id
+
+  Tags:
+    name: string
+
+  PostTag:
+    post_id: id
+    tag_id: id 
