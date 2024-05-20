@@ -1,4 +1,6 @@
 <x-layout >
+<x-post-filters></x-post-filters>
+
     <div class="relative overflow-x-auto shadow-md sm:rounded-lg ">
         <table class="w-full text-sm text-left rtl:text-right text-gray-500 text-gray-400">
             <thead class="text-xs uppercase bg-gray-50 bg-gray-700 text-white">
@@ -17,6 +19,9 @@
                     </th>
                     <th scope="col" class="px-6 py-3">
                         Categories
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Published Date
                     </th>
                     <th scope="col" class="px-6 py-3">
                         Actions
@@ -42,6 +47,9 @@
                         </td>
                         <td class="px-6 py-4">
                             {{ $post->tags->pluck('name')->implode(', ') }}
+                        </td>
+                        <td class="px-6 py-4">
+                            {{ $post->created_at->format('d / m / Y') }}
                         </td>
                         <td class="px-6 py-4 space-x-2">
                             <a href="/posts/{{ $post->id }}" class="font-medium text-blue-600 text-blue-500 hover:underline">
