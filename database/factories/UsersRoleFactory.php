@@ -21,8 +21,8 @@ class UsersRoleFactory extends Factory
     public function definition(): array
     {
         return [
-            'role_type' => $this->faker->regexify('[A-Za-z0-9]{20}'),
-            'role_name' => $this->faker->regexify('[A-Za-z0-9]{20}'),
+            'role_type' => $this->faker->randomElement(['admin', 'user']),
+            'role_name' => $this->faker->randomElement(['Admin', 'User']),
         ];
     }
 }
