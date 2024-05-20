@@ -25,36 +25,45 @@
             </thead>
             <tbody>
                 @foreach ($posts as $post)
-                    
-                <tr class="bg-white border-b bg-gray-800 border-gray-700 ">
-                    
-                    <td class="px-6 py-4">
-                        {{ $loop->index + 1 }}
-                    </td>
-                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap ">
-                        {{ $post->title }}
-                    </th>
-                    <td class="px-6 py-4">
-                        {{ $post->user->first_name . ' ' . $post->user->last_name  }}
-                    </td>
-                    <td class="px-6 py-4">
-                       {{ $post->comments_count }}
-                    </td>
-                    <td class="px-6 py-4">
-                        {{ $post->tags->pluck('name')->implode(', ') }}
-                    </td>
-                    <td class="px-6 py-4 space-x-2">
-                        <a href="/posts/{{ $post->id }}" class="font-medium text-blue-600 text-blue-500 hover:underline">
-                            <i class="fa fa-eye" style="font-size:18px"></i></a>
-                        <a href="#" class="font-medium text-blue-600 text-blue-500 hover:underline">
-                            <i class="fa fa-edit" style="font-size:18px"></i></a>
-                                                    <a href="#" class="font-medium text-blue-600 text-blue-500 hover:underline">
-                            <i class="fa fa-trash-o" style="font-size:18px"></i></a>
-                    </td>
-                </tr>
+                    <tr class="bg-white border-b bg-gray-800 border-gray-700 ">
+                        <td class="px-6 py-4">
+                            {{ $loop->index + 1 }}
+                        </td>
+                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap ">
+                            {{ $post->title }}
+                        </th>
+                        <td class="px-6 py-4">
+                            {{ $post->user->first_name . ' ' . $post->user->last_name  }}
+                        </td>
+                        <td class="px-6 py-4">
+                        {{ $post->comments_count }}
+                        </td>
+                        <td class="px-6 py-4">
+                            {{ $post->tags->pluck('name')->implode(', ') }}
+                        </td>
+                        <td class="px-6 py-4 space-x-2">
+                            <a href="/posts/{{ $post->id }}" class="font-medium text-blue-600 text-blue-500 hover:underline">
+                                <i class="fa fa-eye" style="font-size:18px"></i></a>
+                            @auth
+
+                                @if ( Auth::id() == $post->user_id )
+                                    <a href="/posts/{{ $post->id }}/edit" class="font-medium text-blue-600 text-blue-500 hover:underline">
+                                        <i class="fa fa-edit" style="font-size:18px"></i>
+                                    </a>
+                                @endif
+                            
+                                @if ( Auth::user()->users_role_id == 1 )
+                                    <div class="inline-block">
+                                        <form method="post" action="/posts/{{ $post->id }}/delete">
+                                            @csrf
+                                            <button type="submit" onclick="return confirm('Are you sure?')" class="text-red-500"><i class="fa fa-trash-o" style="font-size:18px"></i></button>
+                                        </form>
+                                    </div>
+                                @endif
+                            @endauth
+                        </td>
+                    </tr>
                 @endforeach
-
-
             </tbody>
         </table>
     </div>

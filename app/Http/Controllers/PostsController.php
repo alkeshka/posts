@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules\File;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Storage;
 
 class PostsController extends Controller
 {
@@ -34,7 +35,7 @@ class PostsController extends Controller
     {
         
         $validatedAttributes = $request->validate([
-            'title' => ['required', 'min:3', 'max:20'],
+            'title' => ['required', 'min:3', 'max:100'],
             'body' => ['required', 'min:3', 'max:225'],
             'status' => ['required'],
             'thumbnail' => ['required', File::types(['png', 'jpg', 'jpeg'])->max(10240)],
@@ -42,7 +43,8 @@ class PostsController extends Controller
         ]);
 
        
-        $thumbnailPath = $request->thumbnail->store('thumbnail');
+        $thumbnailPath = $request->thumbnail->store('thumbnail', 'public');
+        // $profilePhotoPath = $request->file('profile_photo')->store('profile-photos', 'public');
         $validatedAttributes['thumbnail'] = $thumbnailPath;
 
         $post = Auth::user()->posts()->create(Arr::except($validatedAttributes, 'categories'));
@@ -63,34 +65,68 @@ class PostsController extends Controller
     {
         $post->load('comments.user');  // Eager load comments and user
 
-        if (!$post) {
-            abort(404); 
-        }
 
-        return view('posts.show', ['post' => $post]);
+        return view('posts.show', [
+            'post' => $post,
+        ]);
     }
+
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
-    {
-        //
+    public function edit(Posts $post)
+    {   
+        return view('posts.edit', [ 'post' => $post]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Posts $post)
     {
-        //
+        $validatedAttributes = $request->validate([
+            'title' => ['required', 'min:3', 'max:100'],
+            'body' => ['required', 'min:3', 'max:225'],
+            'status' => ['required'],
+            'thumbnail' => [ File::types(['png', 'jpg', 'jpeg'])->max(10240)],
+            'categories' => ['required'],
+        ]);
+
+        if ($request->hasFile('thumbnail')) {
+            Storage::delete($post->thumbnail);
+            $thumbnailPath = $request->thumbnail->store('thumbnail', 'public');
+            $validatedAttributes['thumbnail'] = $thumbnailPath;
+        }
+
+        $post->update(Arr::except($validatedAttributes, 'categories'));
+
+        $existingTags = explode(',', $post->tags->pluck('name')->implode(','));;
+        $newTags      = explode(',', $validatedAttributes['categories']);
+
+        $deletedTags = array_diff($existingTags, $newTags);
+        $addedTags   = array_diff($newTags, $existingTags);
+
+        foreach ($deletedTags as $tag) {
+            $post->untag($tag);
+        }
+
+        foreach ($addedTags as $tag) {
+            $post->tag($tag);
+        }
+
+        return redirect('/');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Posts $post)
     {
-        //
+        if (Auth::user()->users_role_id == 1) {
+            $post->delete();
+        }
+
+        return redirect('/');
     }
 }

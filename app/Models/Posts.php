@@ -58,4 +58,9 @@ class Posts extends Model
     {
         return $this->hasMany(Comments::class);
     }
+
+    public function untag()
+    {
+        $this->tags()->detach();
+    }
 }

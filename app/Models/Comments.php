@@ -18,7 +18,7 @@ class Comments extends Model
     protected $fillable = [
         'body',
         'user_id',
-        'post_id',
+        'posts_id',
     ];
 
     /**
@@ -29,7 +29,7 @@ class Comments extends Model
     protected $casts = [
         'id' => 'integer',
         'user_id' => 'integer',
-        'post_id' => 'integer',
+        'posts_id' => 'integer',
     ];
 
     public function user(): BelongsTo
