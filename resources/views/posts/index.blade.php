@@ -36,7 +36,9 @@
                             {{ $post->user->first_name . ' ' . $post->user->last_name  }}
                         </td>
                         <td class="px-6 py-4">
-                        {{ $post->comments_count }}
+                           <button onclick="loadComments({{ $post->id }})">
+                                {{ $post->comments_count }}
+                            </button>
                         </td>
                         <td class="px-6 py-4">
                             {{ $post->tags->pluck('name')->implode(', ') }}
@@ -67,4 +69,6 @@
             </tbody>
         </table>
     </div>
+
 </x-layout>
+<x-modal></x-modal>

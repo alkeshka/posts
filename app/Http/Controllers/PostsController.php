@@ -25,7 +25,7 @@ class PostsController extends Controller
      */
     public function create()
     {
-      return view('posts.create');
+        return view('posts.create');
     }
 
     /**
@@ -33,7 +33,7 @@ class PostsController extends Controller
      */
     public function store(Request $request)
     {
-        
+
         $validatedAttributes = $request->validate([
             'title' => ['required', 'min:3', 'max:100'],
             'body' => ['required', 'min:3', 'max:225'],
@@ -42,7 +42,6 @@ class PostsController extends Controller
             'categories' => ['required'],
         ]);
 
-       
         $thumbnailPath = $request->thumbnail->store('thumbnail', 'public');
         // $profilePhotoPath = $request->file('profile_photo')->store('profile-photos', 'public');
         $validatedAttributes['thumbnail'] = $thumbnailPath;
@@ -65,7 +64,6 @@ class PostsController extends Controller
     {
         $post->load('comments.user');  // Eager load comments and user
 
-
         return view('posts.show', [
             'post' => $post,
         ]);
@@ -76,7 +74,7 @@ class PostsController extends Controller
      * Show the form for editing the specified resource.
      */
     public function edit(Posts $post)
-    {   
+    {
         return view('posts.edit', [ 'post' => $post]);
     }
 
@@ -101,7 +99,7 @@ class PostsController extends Controller
 
         $post->update(Arr::except($validatedAttributes, 'categories'));
 
-        $existingTags = explode(',', $post->tags->pluck('name')->implode(','));;
+        $existingTags = explode(',', $post->tags->pluck('name')->implode(','));
         $newTags      = explode(',', $validatedAttributes['categories']);
 
         $deletedTags = array_diff($existingTags, $newTags);

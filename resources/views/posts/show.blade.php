@@ -15,9 +15,9 @@
         <div>
             <h4 class="font-bold text-gray-900 mt-10 text-xl">Categories</h4>
             <div class="mt-2">
-            @foreach ($post->tags as $category)
-                <span class="bg-blue-100 text-blue-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded">{{ $category->name }}</span>
-            @endforeach
+                @foreach ($post->tags as $category)
+                    <span class="bg-blue-100 text-blue-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded">{{ $category->name }}</span>
+                @endforeach
             </div>
                 
         </div>

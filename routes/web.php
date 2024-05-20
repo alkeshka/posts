@@ -33,3 +33,4 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::get('/posts/{post}', [PostsController::class, 'show'])->name('posts.show');
+Route::get('/comments/{post:id}', [CommentsController::class, 'index']);

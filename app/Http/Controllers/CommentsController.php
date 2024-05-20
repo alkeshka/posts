@@ -8,6 +8,12 @@ use Illuminate\Support\Facades\Auth;
 
 class CommentsController extends Controller
 {
+    public function index(String $id)
+    {
+        $comments = Comments::latest()->where('posts_id', $id)->with('user')->get();
+        return $comments;
+    }
+
     public function store(Request $request)
     {
         $validatedAttributes = $request->validate([
@@ -25,7 +31,7 @@ class CommentsController extends Controller
         if(Auth::user()->id === $comment->user_id) {
             $status = $comment->delete();
         }
-        
+
         return redirect()->back();
     }
 }
