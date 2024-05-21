@@ -18,7 +18,7 @@ class FilterController extends Controller
 
         if ($tagId = $request->category) {
             $posts = $posts->whereHas('tags', function ($query) use ($tagId) {
-                $query->where('tags.id', $tagId); 
+                $query->where('tags.id', $tagId);
             });
         }
 
@@ -37,6 +37,4 @@ class FilterController extends Controller
 
         return $posts->with(['tags', 'user'])->get();
     }
-
-    
 }

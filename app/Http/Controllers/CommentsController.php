@@ -10,8 +10,11 @@ class CommentsController extends Controller
 {
     public function index(String $id)
     {
-        $comments = Comments::latest()->where('posts_id', $id)->with('user')->get();
-        return $comments;
+        return Comments::latest()
+            ->where('posts_id', $id)
+            ->with('user')
+            ->select('id', 'posts_id', 'user_id', 'body', 'created_at')
+            ->get();
     }
 
     public function store(Request $request)
@@ -21,17 +24,15 @@ class CommentsController extends Controller
             'body' => ['required', 'min:3', 'max:225'],
         ]);
 
-        $comment = Auth::user()->comments()->create($validatedAttributes);
+        Auth::user()->comments()->create($validatedAttributes);
 
-        return redirect(route('posts.show', $comment->posts_id));
+        return redirect()->back();
     }
 
     public function destroy(Comments $comment)
     {
-        if(Auth::user()->id === $comment->user_id) {
-            $status = $comment->delete();
-        }
-
-        return redirect()->back();
+        return $comment->user_id === Auth::id()
+            ? $comment->delete() && redirect()->back()
+            : redirect()->back();
     }
 }

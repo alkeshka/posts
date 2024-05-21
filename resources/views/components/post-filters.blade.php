@@ -1,19 +1,19 @@
-@props(['users', 'tags', 'publishedDates', 'commentsCounts' , 'authUserRoleId'])
+@props(['postAuthors', 'tags', 'publishedDates', 'commentsCounts' , 'authUserRoleId'])
 
-<div class="mb-4">
+<div class="mb-2 flex">
 
     <input type="hidden" name="_token" id="token" value="{{ csrf_token() }}">
     <select name="author" id="author" class="ml-8 border border-gray-300 rounded-md p-3 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
         <option value="">Filter by Author</option>
-        @foreach ($users as $user)
-            <option value="{{ $user->id }}">{{ $user->name }}</option>
+        @foreach ($postAuthors as $postAuthor)
+            <option value="{{ $postAuthor->id }}">{{ $postAuthor->first_name . ' '. $postAuthor->last_name }}</option>
         @endforeach
     </select>
 
     <select name="category" id="category" class="ml-8 border border-gray-300 rounded-md p-3 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
         <option value="">Filter by Categories</option>
-        @foreach ($tags as $key=>$tag)
-            <option value="{{ $key }}">{{ $tag }}</option>
+        @foreach ($tags as $tag)
+            <option value="{{ $tag->id }}">{{ $tag->name }}</option>
         @endforeach
     </select>
 

@@ -10,7 +10,8 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasFactory;
+    use Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -56,5 +57,10 @@ class User extends Authenticatable
     public function comments(): HasMany
     {
         return $this->hasMany(Comments::class);
+    }
+
+    public function scopePostAuthors()
+    {
+        return $this->whereHas('posts');
     }
 }

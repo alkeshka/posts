@@ -1,6 +1,6 @@
 <x-layout >
 
-<x-post-filters :users="$users" :tags="$tags" :publishedDates="$publishedDates" :commentsCounts="$commentsCounts" />
+<x-post-filters :postAuthors="$postAuthors" :tags="$tags" :publishedDates="$publishedDates" :commentsCounts="$commentsCounts" />
 
     <div class="relative overflow-x-auto shadow-md sm:rounded-lg ">
         <table class="w-full text-sm text-left rtl:text-right text-gray-500 text-gray-400">
@@ -57,7 +57,7 @@
                                 <i class="fa fa-eye" style="font-size:18px"></i></a>
                             @auth
 
-                                @if ( Auth::id() == $post->user_id )
+                                @if ( Auth::id() == $post->user_id || Auth::user()->users_role_id == 1 )
                                     <a href="/posts/{{ $post->id }}/edit" class="font-medium text-blue-600 text-blue-500 hover:underline">
                                         <i class="fa fa-edit" style="font-size:18px"></i>
                                     </a>
@@ -75,6 +75,8 @@
             </tbody>
         </table>
     </div>
-
 </x-layout>
-<x-modal></x-modal>
+{{-- <div class="mt-3"> --}}
+    {{-- {{ $posts->links() }} --}}
+{{--  /</div> --}}
+<x-modal />

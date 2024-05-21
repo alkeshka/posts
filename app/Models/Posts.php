@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -63,4 +64,26 @@ class Posts extends Model
     {
         $this->tags()->detach();
     }
+
+    public function scopePublishedWithDetails()
+    {
+        return $this->latest()->where('status', 1)->with(['tags', 'user'])->withCount('comments');
+    }
+
+    public function scopePostsCommentsCounts()
+    {
+        return $this->withCount('comments')->orderBy('comments_count', 'asc')->pluck('comments_count')->unique()->values();
+    }
+
+    public function scopeFormattedPublishedDates()
+    {
+        return $this->where('status', 1)
+                    ->pluck('created_at')
+                    ->map(function ($date) {
+                        return Carbon::parse($date)->format('d/m/Y');
+                    })
+                    ->unique()
+                    ->values();
+    }
+
 }

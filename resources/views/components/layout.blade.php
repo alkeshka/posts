@@ -47,7 +47,9 @@
                     <div class="relative ml-3">
                         <div class="text-white">
                             @auth
-                               <a href="/posts/create">Create a post</a>
+                                <span>Hi, {{ Auth::user()->first_name }}</span>
+                                <span class="ml-2" > | </span>
+                               <a class="ml-2" href="/posts/create">Create a post</a>
                                 <span class="ml-2" > | </span>
                                 <div class="inline-block ml-2">
                                     <form action="/logout" method="POST">

@@ -18,33 +18,20 @@ class PostsController extends Controller
      */
     public function index()
     {
-        $posts = Posts::latest()->where('status',1)->with(['tags','user'])->withCount('comments')->get();
 
-        $users = $posts->pluck('user')
-                       ->unique('id')
-                       ->map(function ($user) {
-                           return (object) [
-                               'id' => $user->id,
-                               'name' => "{$user->first_name} {$user->last_name}",
-                           ];
-                       })->toArray();
+        $publishedPosts = Posts::publishedWithDetails()->simplePaginate(4);
+        $postAuthors    = User::postAuthors()->get();
+        $tags           = Tags::all();
+        $publishedDates = Posts::formattedPublishedDates()->toArray();
+        $commentsCounts = Posts::PostsCommentsCounts()->toArray();
+        $tags           = Tags::all();
+ 
 
-        
-        $tags = $posts->pluck('tags')->flatten()->unique('id')->pluck('name', 'id')->toArray();
-
-        $publishedDates = $posts->pluck('created_at')->map(function ($date) {
-            return $date->format('d/m/Y'); 
-        })->unique()->values();
-
-        $commentsCounts = $posts->pluck('comments_count')->map(function ($comments_count) {
-            return $comments_count;
-        })->unique()->values();
-
-        return view('posts.index', [ 
-            'users' => $users, 
-            'tags' => $tags, 
-            'publishedDates' => $publishedDates, 
-            'posts' => $posts,
+        return view('posts.index', [
+            'postAuthors' => $postAuthors,
+            'tags' => $tags,
+            'publishedDates' => $publishedDates,
+            'posts' => $publishedPosts,
             'commentsCounts' => $commentsCounts
         ]);
     }

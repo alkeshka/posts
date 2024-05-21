@@ -59,9 +59,7 @@ $(document).ready(function() {
 
         const isLoggedIn = $('#isLoggedIn').val();
         const userId = $('#userId').val();
-        const userRoleId = $('#userRoleId').val();
-
-        
+        const userRoleId = $('#userRoleId').val();  
 
         $.ajax({
             url: "/filter" ,
@@ -110,25 +108,20 @@ $(document).ready(function() {
                         <td class="px-6 py-4 space-x-2">
                             <a href="/posts/${ post.id }" class="font-medium text-blue-600 text-blue-500 hover:underline">
                                 <i class="fa fa-eye" style="font-size:18px"></i></a>
-
-                                ${ isLoggedIn ?  // Use the isLoggedIn variable from your previous approach
-                                         
-                                ` ${ userId == post.user_id  ? ` 
-                                        <a href="/posts/${ post.id }/edit" class="font-medium text-blue-600 text-blue-500 hover:underline">
-                                            <i class="fa fa-edit" style="font-size:18px"></i>
-                                        </a>` : ''}  
-                                        
-                                            ${ userId == post.user_id  ? `
-                                        <a onclick="return confirm('Are you sure?')" href="/posts/${ post.id }/delete" class="font-medium text-blue-600 text-blue-500 hover:underline">
-                                            <i class="fa fa-trash-o text-red-500" style="font-size:18px"></i>
-                                        </a>` : '' }
-                                                
-                                        ` : '' }
-
+                                ${ isLoggedIn ?                                           
+                            ` ${ userId == post.user_id || userRoleId == 1 ? ` 
+                                    <a href="/posts/${ post.id }/edit" class="font-medium text-blue-600 text-blue-500 hover:underline">
+                                        <i class="fa fa-edit" style="font-size:18px"></i>
+                                    </a>` : ''}  
+                                    
+                                        ${ userRoleId == 1  ? `
+                                    <a onclick="return confirm('Are you sure?')" href="/posts/${ post.id }/delete" class="font-medium text-blue-600 text-blue-500 hover:underline">
+                                        <i class="fa fa-trash-o text-red-500" style="font-size:18px"></i>
+                                    </a>` : '' }
+                                            
+                                    ` : '' }
                         </td>
-                    </tr>
-                    `;
-
+                    </tr>`;
                     tableBody.append(commentHTML);
                 });
             },

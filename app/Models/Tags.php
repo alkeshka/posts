@@ -26,4 +26,5 @@ class Tags extends Model
     protected $casts = [
         'id' => 'integer',
     ];
+
 }
