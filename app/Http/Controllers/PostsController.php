@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Posts;
+use App\Models\Tags;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules\File;
@@ -17,7 +19,34 @@ class PostsController extends Controller
     public function index()
     {
         $posts = Posts::latest()->where('status',1)->with(['tags','user'])->withCount('comments')->get();
-        return view('posts.index', [ 'posts' => $posts]);
+
+        $users = $posts->pluck('user')
+                       ->unique('id')
+                       ->map(function ($user) {
+                           return (object) [
+                               'id' => $user->id,
+                               'name' => "{$user->first_name} {$user->last_name}",
+                           ];
+                       })->toArray();
+
+        
+        $tags = $posts->pluck('tags')->flatten()->unique('id')->pluck('name', 'id')->toArray();
+
+        $publishedDates = $posts->pluck('created_at')->map(function ($date) {
+            return $date->format('d/m/Y'); 
+        })->unique()->values();
+
+        $commentsCounts = $posts->pluck('comments_count')->map(function ($comments_count) {
+            return $comments_count;
+        })->unique()->values();
+
+        return view('posts.index', [ 
+            'users' => $users, 
+            'tags' => $tags, 
+            'publishedDates' => $publishedDates, 
+            'posts' => $posts,
+            'commentsCounts' => $commentsCounts
+        ]);
     }
 
     /**

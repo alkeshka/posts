@@ -1,5 +1,6 @@
 <x-layout >
-<x-post-filters></x-post-filters>
+
+<x-post-filters :users="$users" :tags="$tags" :publishedDates="$publishedDates" :commentsCounts="$commentsCounts" />
 
     <div class="relative overflow-x-auto shadow-md sm:rounded-lg ">
         <table class="w-full text-sm text-left rtl:text-right text-gray-500 text-gray-400">
@@ -12,7 +13,7 @@
                         Blog Title
                     </th>
                     <th scope="col" class="px-6 py-3">
-                        Auther
+                        Author
                     </th>
                     <th scope="col" class="px-6 py-3">
                         Comments count
@@ -28,7 +29,7 @@
                     </th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="tableBody">
                 @foreach ($posts as $post)
                     <tr class="bg-white border-b bg-gray-800 border-gray-700 ">
                         <td class="px-6 py-4">
@@ -49,7 +50,7 @@
                             {{ $post->tags->pluck('name')->implode(', ') }}
                         </td>
                         <td class="px-6 py-4">
-                            {{ $post->created_at->format('d / m / Y') }}
+                            {{ $post->created_at->format('d/m/Y') }}
                         </td>
                         <td class="px-6 py-4 space-x-2">
                             <a href="/posts/{{ $post->id }}" class="font-medium text-blue-600 text-blue-500 hover:underline">
@@ -63,12 +64,9 @@
                                 @endif
                             
                                 @if ( Auth::user()->users_role_id == 1 )
-                                    <div class="inline-block">
-                                        <form method="post" action="/posts/{{ $post->id }}/delete">
-                                            @csrf
-                                            <button type="submit" onclick="return confirm('Are you sure?')" class="text-red-500"><i class="fa fa-trash-o" style="font-size:18px"></i></button>
-                                        </form>
-                                    </div>
+                                    <a onclick="return confirm('Are you sure?')" href="/posts/{{ $post->id }}/delete" class="font-medium text-blue-600 text-blue-500 hover:underline">
+                                        <i class="fa fa-trash-o text-red-500" style="font-size:18px"></i>
+                                    </a>
                                 @endif
                             @endauth
                         </td>

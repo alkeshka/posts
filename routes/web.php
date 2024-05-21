@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CommentsController;
+use App\Http\Controllers\FilterController;
 use App\Http\Controllers\PostsController;
 use App\Http\Controllers\RegisteredUserController;
 use App\Http\Controllers\SessionController;
@@ -26,7 +27,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/posts/{post}/edit', [PostsController::class, 'edit']);
     Route::post('/posts/{post}/edit', [PostsController::class, 'update']);
 
-    Route::post('/posts/{post}/delete', [PostsController::class, 'destroy']);
+    Route::get('/posts/{post}/delete', [PostsController::class, 'destroy']);
 
     Route::post('/comments', [CommentsController::class, 'store']);
     Route::post('/comments/{comment}/delete', [CommentsController::class, 'destroy']);
@@ -34,3 +35,5 @@ Route::middleware('auth')->group(function () {
 
 Route::get('/posts/{post}', [PostsController::class, 'show'])->name('posts.show');
 Route::get('/comments/{post:id}', [CommentsController::class, 'index']);
+
+Route::post('/filter', FilterController::class);

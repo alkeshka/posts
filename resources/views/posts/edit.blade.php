@@ -1,4 +1,4 @@
-<x-layout header="Create Your Post">
+<x-layout header="Edit Your Post: {{ $post->title }}">
     <x-forms.form action="/posts/{{ $post->id }}/edit" enctype="multipart/form-data" method="POST">
         <div class=" grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
 
