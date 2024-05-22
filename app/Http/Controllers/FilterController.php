@@ -22,9 +22,11 @@ class FilterController extends Controller
             });
         }
 
-        if ($request->has('noOfComments')) {
+        if ($request->has('noOfComments') && $request->noOfComments != null) {
             $commentCount = (int) $request->noOfComments;
-            $postQuery = $postQuery->where('comments_count', '=', $commentCount);
+            if ($commentCount >= 0) {
+                $postQuery = $postQuery->where('comments_count', '=', $commentCount);
+            }
         }
 
         if (isset($request->publishedDate)) {

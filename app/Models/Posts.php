@@ -78,20 +78,4 @@ class Posts extends Model
         return $this->latest()->where('status', 1)->with(['tags', 'user'])->withCount('comments');
     }
 
-    public function scopePostsCommentsCounts()
-    {
-        return $this->withCount('comments')->orderBy('comments_count', 'asc')->pluck('comments_count')->unique()->values();
-    }
-
-    public function scopeFormattedPublishedDates()
-    {
-        return $this->where('status', 1)
-                    ->pluck('created_at')
-                    ->map(function ($date) {
-                        return Carbon::parse($date)->format('d/m/Y');
-                    })
-                    ->unique()
-                    ->values();
-    }
-
 }

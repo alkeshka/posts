@@ -4,13 +4,23 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreCommentRequest;
 use App\Models\Comments;
+use App\Repositories\CommentsRepository;
 use Illuminate\Support\Facades\Auth;
 
 class CommentsController extends Controller
 {
+
+    protected $commentsRepository;
+
+    public function __construct(CommentsRepository $commentsRepository)
+    {
+        $this->commentsRepository = $commentsRepository;
+    }
+
+
     public function index(String $postId)
     {
-        $postAssociatedComments = Comments::getLatestCommentsForPost($postId);
+        $postAssociatedComments = $this->commentsRepository->getLatestForPost($postId);
         return $postAssociatedComments;
     }
 

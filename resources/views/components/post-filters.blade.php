@@ -36,12 +36,10 @@
     </div>
 
     <input type="hidden" id="isLoggedIn" value="{{ Auth::check() }}">
-    
+
     @auth
         <input type="hidden" id="userId" value="{{ Auth::id() }}">
         <input type="hidden" id="userRoleId" value="{{ Auth::user()->users_role_id }}">
     @endauth
-    
-
 
 </div>

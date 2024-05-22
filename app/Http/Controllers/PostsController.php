@@ -7,7 +7,8 @@ use App\Http\Requests\UpdatePostRequest;
 use App\Models\Posts;
 use App\Models\Tags;
 use App\Models\User;
-use App\Service\PostService;
+use App\Repositories\PostRepository;
+use App\Services\PostService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Arr;
 
@@ -19,9 +20,14 @@ class PostsController extends Controller
      * @param PostService $postService The PostService instance to be used.
      */
     protected $postService;
-    public function __construct(PostService $postService)
-    {
+    protected $postRepository;
+
+    public function __construct(
+        PostService $postService,
+        PostRepository $postRepository
+        ) {
         $this->postService = $postService;
+        $this->postRepository = $postRepository;
     }
 
     /**
@@ -37,8 +43,8 @@ class PostsController extends Controller
 
         $postAuthors    = User::postAuthors()->get();
         $tags           = Tags::all();
-        $publishedDates = Posts::formattedPublishedDates()->toArray();
-        $commentsCounts = Posts::PostsCommentsCounts()->toArray();
+        $publishedDates = $this->postRepository->getFormattedPublishedDates();
+        $commentsCounts = $this->postRepository->getPostsCommentsCounts()->toArray();
         $tags           = Tags::all();
 
         return view('posts.index', [
