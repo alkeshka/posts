@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreCommentRequest;
 use App\Models\Comments;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class CommentsController extends Controller

@@ -30,9 +30,9 @@ class PostsController extends Controller
     public function index()
     {
         if (Auth::check() && Auth::user()->users_role_id == 1) {
-            $postsWithDetails = Posts::allWithDetails()->simplePaginate(4);
+            $postsWithDetails = Posts::allWithDetails()->paginate(4);
         } else {
-            $postsWithDetails = Posts::publishedWithDetails()->simplePaginate(4);
+            $postsWithDetails = Posts::publishedWithDetails()->paginate(4);
         }
 
         $postAuthors    = User::postAuthors()->get();
@@ -78,8 +78,6 @@ class PostsController extends Controller
         return redirect('/');
     }
 
-
-
     /**
      * Display the specified resource.
      */
@@ -89,7 +87,6 @@ class PostsController extends Controller
             'post' => $post->load('comments.user'),
         ]);
     }
-
 
     /**
      * Show the form for editing the specified resource.

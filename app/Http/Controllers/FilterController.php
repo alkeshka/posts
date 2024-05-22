@@ -22,8 +22,8 @@ class FilterController extends Controller
             });
         }
 
-        if ($commentCount = $request->noOfComments) {
-            $commentCount = (int) $commentCount;
+        if ($request->has('noOfComments')) {
+            $commentCount = (int) $request->noOfComments;
             $postQuery = $postQuery->where('comments_count', '=', $commentCount);
         }
 
