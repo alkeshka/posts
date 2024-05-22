@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreUserRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -20,21 +21,15 @@ class RegisteredUserController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreUserRequest $request)
     {
-        //validation
-        $userAttributes = $request->validate([
-           'first_name' => ['required', 'min:3', 'max:20'],
-           'last_name' => ['nullable', 'max:20'],
-           'email' => ['required', 'email'],
-           'password' => ['required', 'confirmed', Password::min(6)],
-        ]);
+        $validatedAttributes = $request->validated();
 
-        $userAttributes = array_merge($userAttributes, [
+        $validatedAttributes = array_merge($validatedAttributes, [
             'users_role_id' => 2
         ]);
 
-        $user = User::create($userAttributes);
+        $user = User::create($validatedAttributes);
 
         Auth::login($user);
 

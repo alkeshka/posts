@@ -5,9 +5,11 @@ use App\Http\Controllers\FilterController;
 use App\Http\Controllers\PostsController;
 use App\Http\Controllers\RegisteredUserController;
 use App\Http\Controllers\SessionController;
+use App\Http\Controllers\TagsController;
+use App\Models\Tags;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', [ PostsController::class, 'index']);
+Route::get('/', [ PostsController::class, 'index'])->name('home');
 
 
 Route::middleware('guest')->group(function () {
@@ -21,10 +23,10 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [SessionController::class, 'destroy']);
 
-    Route::get('/posts/create', [PostsController::class, 'create']);
+    Route::get('/posts/create', [PostsController::class, 'create'])->name('create');
     Route::post('/posts', [PostsController::class, 'store']);
 
-    Route::get('/posts/{post}/edit', [PostsController::class, 'edit']);
+    Route::get('/posts/{post}/edit', [PostsController::class, 'edit'])->name('edit');
     Route::post('/posts/{post}/edit', [PostsController::class, 'update']);
 
     Route::get('/posts/{post}/delete', [PostsController::class, 'destroy']);
@@ -33,7 +35,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/comments/{comment}/delete', [CommentsController::class, 'destroy']);
 });
 
-Route::get('/posts/{post}', [PostsController::class, 'show'])->name('posts.show');
+Route::get('/posts/{post}', [PostsController::class, 'show'])->name('view');
 Route::get('/comments/{post:id}', [CommentsController::class, 'index']);
 
 Route::post('/filter', FilterController::class);
+Route::get('/tags/{tags}', TagsController::class)->name('tags');

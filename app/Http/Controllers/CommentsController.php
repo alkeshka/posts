@@ -2,27 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreCommentRequest;
 use App\Models\Comments;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class CommentsController extends Controller
 {
-    public function index(String $id)
+    public function index(String $postId)
     {
-        return Comments::latest()
-            ->where('posts_id', $id)
-            ->with('user')
-            ->select('id', 'posts_id', 'user_id', 'body', 'created_at')
-            ->get();
+        $postAssociatedComments = Comments::getLatestCommentsForPost($postId);
+        return $postAssociatedComments;
     }
 
-    public function store(Request $request)
+    public function store(StoreCommentRequest $request)
     {
-        $validatedAttributes = $request->validate([
-            'posts_id' => ['required', 'exists:posts,id'],
-            'body' => ['required', 'min:3', 'max:225'],
-        ]);
+        $validatedAttributes = $request->validated();
 
         Auth::user()->comments()->create($validatedAttributes);
 
@@ -31,7 +26,7 @@ class CommentsController extends Controller
 
     public function destroy(Comments $comment)
     {
-        return $comment->user_id === Auth::id()
+        return $comment->user_id === Auth::id() || Auth::user()->user_role_id == 1
             ? $comment->delete() && redirect()->back()
             : redirect()->back();
     }

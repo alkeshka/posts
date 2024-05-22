@@ -41,4 +41,13 @@ class Comments extends Model
     {
         return $this->belongsTo(Posts::class);
     }
+
+    public static function getLatestCommentsForPost($postId)
+    {
+        return self::latest()
+            ->where('posts_id', $postId)
+            ->with('user')
+            ->select('id', 'posts_id', 'user_id', 'body', 'created_at')
+            ->get();
+    }
 }

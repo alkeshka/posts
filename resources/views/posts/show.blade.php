@@ -1,5 +1,5 @@
 <x-layout header="{{ $post->title }}" >
-
+    <x-breadcrumb breadcrumbsName="view" :model="$post" />
     <section >
         <div>
             @if(isset($post->thumbnail))
@@ -7,7 +7,7 @@
                     <img src="{{ asset('storage/'. $post->thumbnail)}}" alt="post_image" class="mb-4">
                 </div>
             @endif
-            {{ $post->body }} 
+            {{ $post->body }}
         </div>
     </section>
 
@@ -16,14 +16,16 @@
             <h4 class="font-bold text-gray-900 mt-10 text-xl">Categories</h4>
             <div class="mt-2">
                 @foreach ($post->tags as $category)
+                    <a href="/tags/{{ $category->id }}">
                     <span class="bg-blue-100 text-blue-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded">{{ $category->name }}</span>
+                    </a>
                 @endforeach
             </div>
-                
+
         </div>
     </section>
 
-    @auth   
+    @auth
         <section>
             <x-forms.comment :postId="$post->id" action="/comments" method="POST" />
         </section>
@@ -41,7 +43,7 @@
                 </div>
                 <p class="text-sm leading-relaxed ">{{ $comment->body }}</p>
                 @auth
-                    @if ($comment->user->id === Auth::user()->id)
+                    @if ($comment->user->id === Auth::user()->id || Auth::user()->users_role_id === 1)
                         <div class="flex justify-end">
                             <form method="post" action="/comments/{{ $comment->id }}/delete">
                                 @csrf

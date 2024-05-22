@@ -1,9 +1,10 @@
 <x-layout header="Create Your Post">
+    <x-breadcrumb breadcrumbsName="create" />
     <x-forms.form action="/posts" enctype="multipart/form-data" method="POST">
         <div class=" grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
 
           <x-forms.input name="title" label="Title" />
-          
+
           <x-forms.textarea name="body" label="Post Body" />
 
           <x-forms.select name="status" label="Published Status">

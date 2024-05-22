@@ -1,8 +1,6 @@
 <x-layout >
 
-    <x-breadcrumb breadcrumbsName="home" />
-
-<x-post-filters :postAuthors="$postAuthors" :tags="$tags" :publishedDates="$publishedDates" :commentsCounts="$commentsCounts" />
+    <x-breadcrumb breadcrumbsName="tag" :model="$tags"  />
 
     <div class="relative overflow-x-auto shadow-md sm:rounded-lg ">
         <table class="w-full text-sm text-left rtl:text-right text-gray-500 text-gray-400">
@@ -32,7 +30,7 @@
                 </tr>
             </thead>
             <tbody id="tableBody">
-                @foreach ($posts as $post)
+                @foreach ($associatedPosts as $post)
                     <tr class="bg-white border-b bg-gray-800 border-gray-700 ">
                         <td class="px-6 py-4">
                             {{ $loop->index + 1 }}
@@ -78,9 +76,9 @@
         </table>
     </div>
 
-    <div class="mt-3">
+    {{-- <div class="mt-3">
         {{ $posts->links() }}
-    </div>
+    </div> --}}
 
 </x-layout>
 

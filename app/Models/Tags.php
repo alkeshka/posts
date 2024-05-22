@@ -27,4 +27,9 @@ class Tags extends Model
         'id' => 'integer',
     ];
 
+    public function posts()
+    {
+        return $this->belongsToMany(Posts::class);
+    }
+
 }

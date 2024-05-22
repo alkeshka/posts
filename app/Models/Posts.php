@@ -60,12 +60,20 @@ class Posts extends Model
         return $this->hasMany(Comments::class);
     }
 
-    public function untag()
+    public function untag($tagName)
     {
-        $this->tags()->detach();
+        $tag = Tags::where('name', $tagName)->first();
+        if ($tag) {
+            $this->tags()->detach($tag->id);
+        }
     }
 
     public function scopePublishedWithDetails()
+    {
+        return $this->latest()->where('status', 1)->with(['tags', 'user'])->withCount('comments');
+    }
+
+    public function scopeAllWithDetails()
     {
         return $this->latest()->where('status', 1)->with(['tags', 'user'])->withCount('comments');
     }
