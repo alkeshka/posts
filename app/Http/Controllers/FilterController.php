@@ -3,14 +3,36 @@
 namespace App\Http\Controllers;
 
 use App\Models\Posts;
+use App\Repositories\PostRepository;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class FilterController extends Controller
 {
+
+    protected $postService;
+    protected $postRepository;
+
+    public function __construct(PostRepository $postRepository)
+    {
+        $this->postRepository = $postRepository;
+    }
+
     public function __invoke(Request $request)
     {
-        $postQuery = Posts::latest()->where('status', 1)->withCount('comments');
+
+        if (!Auth::check()) {
+            $postQuery = Posts::publishedWithDetails();
+        } else {
+            $authUser = Auth::user();
+            if ($authUser->users_role_id == 1) {
+                $postQuery = Posts::allWithDetails();
+            } else {
+                $postQuery = $this->postRepository->getUsersOwnedAndPublishedPosts($authUser->id);
+            }
+        }
+
 
         if ($author = $request->author) {
             $postQuery = $postQuery->where('user_id', $author);

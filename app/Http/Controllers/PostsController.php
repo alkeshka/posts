@@ -25,7 +25,7 @@ class PostsController extends Controller
     public function __construct(
         PostService $postService,
         PostRepository $postRepository
-        ) {
+   ) {
         $this->postService = $postService;
         $this->postRepository = $postRepository;
     }
@@ -35,10 +35,17 @@ class PostsController extends Controller
      */
     public function index()
     {
-        if (Auth::check() && Auth::user()->users_role_id == 1) {
-            $postsWithDetails = Posts::allWithDetails()->paginate(4);
-        } else {
+
+        if(!Auth::check()) {
             $postsWithDetails = Posts::publishedWithDetails()->paginate(4);
+        } else {
+            $authUser = Auth::user();
+            if ($authUser->users_role_id == 1) {
+                $postsWithDetails = Posts::allWithDetails()->paginate(4);
+            } else {
+                $postsWithDetails = $this->postRepository->getUsersOwnedAndPublishedPosts($authUser->id)->paginate(4);
+            }
+
         }
 
         $postAuthors    = User::postAuthors()->get();

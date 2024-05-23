@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -75,7 +74,7 @@ class Posts extends Model
 
     public function scopeAllWithDetails()
     {
-        return $this->latest()->where('status', 1)->with(['tags', 'user'])->withCount('comments');
+        return $this->latest()->with(['tags', 'user'])->withCount('comments');
     }
 
 }
