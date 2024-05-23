@@ -2,10 +2,23 @@
 
 namespace App\Services;
 
+use App\Models\Posts;
+use App\Models\Tags;
+use App\Models\User;
+use App\Repositories\PostRepository;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 
 class PostService
 {
+    protected $postRepository;
+
+    public function __construct(
+        PostRepository $postRepository,
+    ) {
+        $this->postRepository = $postRepository;
+    }
+
     public function tagsSync($validatedTags, $post)
     {
         $existingTags = explode(',', $post->tags->pluck('name')->implode(','));
@@ -35,5 +48,37 @@ class PostService
         foreach (explode(',', $tags) as $tag) {
             $post->tag($tag);
         }
+    }
+
+    public function getPostAuthors()
+    {
+        $cacheKey = 'postAuthors';
+        return Cache::remember($cacheKey, 60, function () {
+            return User::postAuthors()->get();
+        });
+    }
+
+    public function getTags()
+    {
+        $cacheKey = 'tags';
+        return Cache::remember($cacheKey, 60, function () {
+            return Tags::all();
+        });
+    }
+
+    public function getPublishedDates()
+    {
+        $cacheKey = 'publishedDates';
+        return Cache::remember($cacheKey, 60, function () {
+            return $this->postRepository->getFormattedPublishedDates();
+        });
+    }
+
+    public function getCommentsCounts()
+    {
+        $cacheKey = 'commentsCounts';
+        return Cache::remember($cacheKey, 60, function () {
+            return $this->postRepository->getPostsCommentsCounts()->toArray();
+        });
     }
 }

@@ -11,6 +11,7 @@ use App\Repositories\PostRepository;
 use App\Services\PostService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Cache;
 
 class PostsController extends Controller
 {
@@ -35,7 +36,6 @@ class PostsController extends Controller
      */
     public function index()
     {
-
         if(!Auth::check()) {
             $postsWithDetails = Posts::publishedWithDetails()->paginate(4);
         } else {
@@ -48,11 +48,10 @@ class PostsController extends Controller
 
         }
 
-        $postAuthors    = User::postAuthors()->get();
-        $tags           = Tags::all();
-        $publishedDates = $this->postRepository->getFormattedPublishedDates();
-        $commentsCounts = $this->postRepository->getPostsCommentsCounts()->toArray();
-        $tags           = Tags::all();
+        $postAuthors = $this->postService->getPostAuthors();
+        $tags = $this->postService->getTags();
+        $publishedDates = $this->postService->getPublishedDates();
+        $commentsCounts = $this->postService->getCommentsCounts();
 
         return view('posts.index', [
             'postAuthors' => $postAuthors,
