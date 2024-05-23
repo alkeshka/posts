@@ -6,6 +6,7 @@ use App\Models\Posts;
 use App\Models\Tags;
 use App\Models\User;
 use App\Repositories\PostRepository;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 
@@ -78,7 +79,23 @@ class PostService
     {
         $cacheKey = 'commentsCounts';
         return Cache::remember($cacheKey, 60, function () {
-            return $this->postRepository->getPostsCommentsCounts()->toArray();
+            return $this->postRepository->getPostsCommentsCounts();
         });
     }
+
+    public function getPostsBasedOnUser()
+    {
+        if (!Auth::check()) {
+            return Posts::publishedWithDetails();
+        }
+
+        $authUser = Auth::user();
+
+        if (User::isAdmin()) {
+            return Posts::allWithDetails();
+        }
+
+        return $this->postRepository->getUsersOwnedAndPublishedPosts($authUser->id);
+    }
+
 }

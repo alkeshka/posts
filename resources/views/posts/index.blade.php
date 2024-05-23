@@ -2,6 +2,7 @@
 
     <x-breadcrumb breadcrumbsName="home" />
 
+
 <x-post-filters :postAuthors="$postAuthors" :tags="$tags" :publishedDates="$publishedDates" :commentsCounts="$commentsCounts" />
 
     <div class="relative overflow-x-auto shadow-md sm:rounded-lg ">
@@ -78,7 +79,7 @@
         </table>
     </div>
 
-    <div class="mt-3">
+    <div class="mt-3 text-white">
         {{ $posts->links() }}
     </div>
 

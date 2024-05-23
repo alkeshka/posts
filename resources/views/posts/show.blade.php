@@ -1,5 +1,11 @@
 <x-layout header="{{ $post->title }}" >
     <x-breadcrumb breadcrumbsName="view" :model="$post" />
+
+    @if (session('status'))
+        <x-flash-messages message="{{ session('status')['message'] }}" class="{{ session('status')['class'] }}" ></x-flash-messages>
+    @endif
+
+
     <section >
         <div>
             @if(isset($post->thumbnail))
@@ -55,4 +61,5 @@
             </div>
         @endforeach
     </section>
+
 </x-layout>

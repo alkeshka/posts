@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Auth;
 
 class User extends Authenticatable
 {
@@ -62,5 +63,10 @@ class User extends Authenticatable
     public function scopePostAuthors()
     {
         return $this->whereHas('posts');
+    }
+
+    public function scopeIsAdmin()
+    {
+        return Auth::user()->users_role_id == 1;
     }
 }

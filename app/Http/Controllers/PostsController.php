@@ -5,13 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
 use App\Models\Posts;
-use App\Models\Tags;
 use App\Models\User;
 use App\Repositories\PostRepository;
 use App\Services\PostService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Cache;
 
 class PostsController extends Controller
 {
@@ -36,17 +34,7 @@ class PostsController extends Controller
      */
     public function index()
     {
-        if(!Auth::check()) {
-            $postsWithDetails = Posts::publishedWithDetails()->paginate(4);
-        } else {
-            $authUser = Auth::user();
-            if ($authUser->users_role_id == 1) {
-                $postsWithDetails = Posts::allWithDetails()->paginate(4);
-            } else {
-                $postsWithDetails = $this->postRepository->getUsersOwnedAndPublishedPosts($authUser->id)->paginate(4);
-            }
-
-        }
+        $postsWithDetails = $this->postService->getPostsBasedOnUser()->paginate(4);
 
         $postAuthors = $this->postService->getPostAuthors();
         $tags = $this->postService->getTags();
@@ -131,7 +119,7 @@ class PostsController extends Controller
      */
     public function destroy(Posts $post)
     {
-        if (Auth::user()->users_role_id == 1) {
+        if (User::isAdmin()) {
             $post->delete();
         }
 

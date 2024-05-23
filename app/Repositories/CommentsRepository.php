@@ -7,12 +7,12 @@ use Illuminate\Support\Collection;
 
 interface CommentsRepositoryInterface
 {
-    public function getLatestForPost(int $postId): Collection;
+    public function getCommentsForAPost(int $postId): Collection;
 }
 
 class CommentsRepository implements CommentsRepositoryInterface
 {
-    public function getLatestForPost(int $postId): Collection
+    public function getCommentsForAPost(int $postId): Collection
     {
         return Comments::latest()
             ->where('posts_id', $postId)
