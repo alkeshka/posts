@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\UsersRole;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -16,21 +17,26 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        // User::factory()->create([
-        //     'first_name' => 'Test User',
-        //     'last_name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        $adminRole = UsersRole::create([
+            'role_type' => 'admin',
+            'role_name' => 'Admin',
+        ]);
 
-        UsersRole::factory()->createMany([
-            [
-                'role_type' => 'admin',
-                'role_name' => 'Admin',
-            ],
-            [
-                'role_type' => 'user',
-                'role_name' => 'User',
-            ],
+        $adminRoleId = $adminRole->id;
+
+        $userRole = UsersRole::create([
+            'role_type' => 'user',
+            'role_name' => 'User',
+        ]);
+
+        User::factory()->create([
+            'email' => 'admin@gmail.com',
+            'email_verified_at' => now(), // Use Laravel's `now()` helper
+            'password' => Hash::make('password'),
+            'remember_token' => '', // Use Laravel's `Str::random()` helper
+            'first_name' => 'Admin',
+            'last_name' => 'User',
+            'users_role_id' => $adminRoleId, // Adjust if needed
         ]);
     }
 }
