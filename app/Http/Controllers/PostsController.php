@@ -75,7 +75,12 @@ class PostsController extends Controller
             $this->postService->attachTags($post, $validatedAttributes['categories']);
         }
 
-        return redirect('/');
+        $status = [
+                'message' => 'Post created successfully!',
+                'type' => 'success'
+            ];
+
+        return redirect('/')->with('status', $status);
     }
 
     /**

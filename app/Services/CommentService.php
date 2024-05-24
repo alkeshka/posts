@@ -11,9 +11,26 @@ class CommentService
     public function deleteComment(Comments $comment)
     {
         if ($comment->user_id === Auth::id() || User::IsAdmin()) {
-            return $comment->delete();
+            $comment->delete();
+            return [
+                'message' => 'Comment deleted successfully',
+                'type' => 'success'
+            ];
         }
 
-        return false;
+        return [
+            'message' => 'You do not have permission to delete this comment',
+            'type' => 'failure'
+        ];
+    }
+
+    public function createComment(array $validatedAttributes)
+    {
+        Auth::user()->comments()->create($validatedAttributes);
+
+        return [
+            'message' => 'Your comment has been posted. Thank you!',
+            'type' => 'success'
+        ];
     }
 }

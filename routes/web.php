@@ -6,7 +6,6 @@ use App\Http\Controllers\PostsController;
 use App\Http\Controllers\RegisteredUserController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\TagsController;
-use App\Models\Tags;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [ PostsController::class, 'index'])->name('home');

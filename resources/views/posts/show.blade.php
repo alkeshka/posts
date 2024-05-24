@@ -2,7 +2,7 @@
     <x-breadcrumb breadcrumbsName="view" :model="$post" />
 
     @if (session('status'))
-        <x-flash-messages message="{{ session('status')['message'] }}" class="{{ session('status')['class'] }}" ></x-flash-messages>
+        <x-flash-messages message="{{ session('status')['message'] }}" class="{{ session('status')['type'] }}" ></x-flash-messages>
     @endif
 
 

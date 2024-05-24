@@ -24,7 +24,7 @@ class StoreUserRequest extends FormRequest
     {
         return [
             'first_name' => ['required', 'min:3', 'max:20'],
-            'last_name' => ['nullable', 'max:20'],
+            'last_name' => ['required', 'nullable', 'max:20'],
             'email' => ['required', 'email'],
             'password' => ['required', 'confirmed', Password::min(6)],
         ];

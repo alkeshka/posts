@@ -1,7 +1,7 @@
-@props(['message', 'type' => 'sucess'])
+@props(['message', 'type' => 'success'])
 
 
-@if ($type == 'sucess')
+@if ($type == 'success')
 
 <div id="toast-success" class="fixed top-0 left-0 w-full h-full flex items-center justify-center z-50 transition-all duration-800 ease-in-out bg-gray-900 bg-opacity-50" role="alert">
   <div class="flex items-center w-full max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow dark:text-gray-400 dark:bg-gray-800">

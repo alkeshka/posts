@@ -6,6 +6,17 @@ use Carbon\Carbon;
 
 class FilterService
 {
+    public function applyFilters($postQuery, $request)
+    {
+        $postQuery = $this->applyAuthorFilter($postQuery, $request->author);
+        $postQuery = $this->applyTagFilter($postQuery, $request->category);
+        $postQuery = $this->applyCommentCountFilter($postQuery, $request->noOfComments);
+        $postQuery = $this->applyPublishedDateFilter($postQuery, $request->publishedDate);
+        $postQuery = $this->applySearchQueryFilter($postQuery, $request->searchQuery);
+
+        return $postQuery;
+    }
+
     public function applyAuthorFilter($postQuery, $author)
     {
         if ($author) {
@@ -50,6 +61,7 @@ class FilterService
         if ($searchQuery) {
             return $postQuery->where('title', 'like', "%$searchQuery%");
         }
+
         return $postQuery;
     }
 }
