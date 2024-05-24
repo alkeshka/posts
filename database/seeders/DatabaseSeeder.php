@@ -22,21 +22,19 @@ class DatabaseSeeder extends Seeder
             'role_name' => 'Admin',
         ]);
 
-        $adminRoleId = $adminRole->id;
-
-        $userRole = UsersRole::create([
+        UsersRole::create([
             'role_type' => 'user',
             'role_name' => 'User',
         ]);
 
         User::factory()->create([
             'email' => 'admin@gmail.com',
-            'email_verified_at' => now(), // Use Laravel's `now()` helper
+            'email_verified_at' => now(),
             'password' => Hash::make('password'),
-            'remember_token' => '', // Use Laravel's `Str::random()` helper
+            'remember_token' => '',
             'first_name' => 'Admin',
             'last_name' => 'User',
-            'users_role_id' => $adminRoleId, // Adjust if needed
+            'users_role_id' => $adminRole->id,
         ]);
     }
 }
