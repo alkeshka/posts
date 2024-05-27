@@ -23,6 +23,7 @@ class RegisteredUserController extends Controller
     {
         $validatedAttributes = $request->validated();
 
+        // use function instead of User::ROLE_USER
         $dbData = array_merge($validatedAttributes, ['users_role_type' => User::ROLE_USER]);
         $user = User::create($dbData);
 

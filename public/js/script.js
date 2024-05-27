@@ -57,7 +57,7 @@ $(document).ready(function() {
         var publishedDate = $('#publishedDate').val();
         var searchQuery = $('#searchQuery').val();
 
-        const isLoggedIn = $('#isLoggedIn').val();
+        const isLoggedIn = $('#isLoggedIn').val();odal Title
         const userId = $('#userId').val();
         const userRoleId = $('#userRoleId').val();
 
@@ -75,6 +75,7 @@ $(document).ready(function() {
             },
             success: function(data) {
                 tableBody.html("");
+
                 $.each(data, function(index, post) {
 
                     const tagNames = post.tags.map(tag => tag.name);

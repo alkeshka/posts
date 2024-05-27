@@ -22,6 +22,7 @@ class PostService
 
     public function tagsSync($validatedTags, $post)
     {
+        // sync function in laravel 
         $existingTags = explode(',', $post->tags->pluck('name')->implode(','));
         $currentTags  = explode(',', $validatedTags);
 
