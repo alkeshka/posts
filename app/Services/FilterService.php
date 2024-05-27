@@ -2,10 +2,18 @@
 
 namespace App\Services;
 
-use Carbon\Carbon;
+
 
 class FilterService
 {
+
+    protected $dateService;
+
+    public function __construct(DateService $dateService)
+    {
+        $this->dateService = $dateService;
+    }
+
     public function applyFilters($postQuery, $request)
     {
         $postQuery = $this->applyAuthorFilter($postQuery, $request->author);
@@ -49,7 +57,7 @@ class FilterService
     public function applyPublishedDateFilter($postQuery, $publishedDate)
     {
         if ($publishedDate) {
-            $formattedDate = Carbon::createFromFormat('d/m/Y', $publishedDate)->toDateString();
+            $formattedDate = $this->dateService->formatDate($publishedDate);
             return $postQuery->whereDate('created_at', '=', $formattedDate);
         }
 
