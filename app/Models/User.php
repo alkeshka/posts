@@ -70,6 +70,6 @@ class User extends Authenticatable
 
     public function scopeIsAdmin()
     {
-        return Auth::user()->users_role_id == 1;
+        return Auth::user()->users_role_type == User::ROLE_ADMIN;
     }
 }
