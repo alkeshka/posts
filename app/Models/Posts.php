@@ -36,6 +36,13 @@ class Posts extends Model
         'user_id' => 'integer',
     ];
 
+    // In app/Models/Post.php
+
+    public function getCreatedAtAttribute($value)
+    {
+        return \Carbon\Carbon::parse($value)->format('d/m/Y');
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

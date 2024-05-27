@@ -25,10 +25,6 @@ class PostRepository implements PostRepositoryInterface
     {
         return Posts::where('status', 1)
             ->pluck('created_at')
-            ->map(function ($date) {
-                // return Carbon::parse($date)->format('d/m/Y');
-                return $this->dateService->formatDate($date);
-            })
             ->unique()
             ->values();
     }

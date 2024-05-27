@@ -24,10 +24,10 @@ function loadComments() {
 
             $("#modalContent").append(commentHTML);
         });
-        
+
         $('#modal').removeClass('hidden');
     },
-    error: function(jqXHR, textStatus, errorThrown) {     
+    error: function(jqXHR, textStatus, errorThrown) {
         alert("There was an error fetching data!");
     }
     });
@@ -59,15 +59,15 @@ $(document).ready(function() {
 
         const isLoggedIn = $('#isLoggedIn').val();
         const userId = $('#userId').val();
-        const userRoleId = $('#userRoleId').val();  
+        const userRoleId = $('#userRoleId').val();
 
         $.ajax({
             url: "/filter" ,
             type: "POST",
             dataType: "json",
-            data: { 
+            data: {
                 "_token": $('#token').val(),
-                'author': author, 
+                'author': author,
                 'category': category,
                 'noOfComments': noOfComments,
                 'publishedDate': publishedDate,
@@ -76,9 +76,6 @@ $(document).ready(function() {
             success: function(data) {
                 tableBody.html("");
                 $.each(data, function(index, post) {
-
-                    var createdDate = new Date(post.created_at);
-                    var formattedDate = createdDate.getDate() + '/' + (createdDate.getMonth() + 1) + '/' + createdDate.getFullYear();
 
                     const tagNames = post.tags.map(tag => tag.name);
                     const tagNamesString = tagNames.join(", ");
@@ -103,29 +100,29 @@ $(document).ready(function() {
                             ${ tagNamesString }
                         </td>
                         <td class="px-6 py-4">
-                            ${ formattedDate }
+                            ${ post.created_at }
                         </td>
                         <td class="px-6 py-4 space-x-2">
                             <a href="/posts/${ post.id }" class="font-medium text-blue-600 text-blue-500 hover:underline">
                                 <i class="fa fa-eye" style="font-size:18px"></i></a>
-                                ${ isLoggedIn ?                                           
-                            ` ${ userId == post.user_id || userRoleId == 1 ? ` 
+                                ${ isLoggedIn ?
+                            ` ${ userId == post.user_id || userRoleId == 1 ? `
                                     <a href="/posts/${ post.id }/edit" class="font-medium text-blue-600 text-blue-500 hover:underline">
                                         <i class="fa fa-edit" style="font-size:18px"></i>
-                                    </a>` : ''}  
-                                    
+                                    </a>` : ''}
+
                                         ${ userRoleId == 1  ? `
                                     <a onclick="return confirm('Are you sure?')" href="/posts/${ post.id }/delete" class="font-medium text-blue-600 text-blue-500 hover:underline">
                                         <i class="fa fa-trash-o text-red-500" style="font-size:18px"></i>
                                     </a>` : '' }
-                                            
+
                                     ` : '' }
                         </td>
                     </tr>`;
                     tableBody.append(commentHTML);
                 });
             },
-            error: function(jqXHR, textStatus, errorThrown) {     
+            error: function(jqXHR, textStatus, errorThrown) {
                 alert("There was an error fetching data!");
             }
         });
