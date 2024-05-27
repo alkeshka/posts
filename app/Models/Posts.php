@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -36,11 +37,16 @@ class Posts extends Model
         'user_id' => 'integer',
     ];
 
-    // In app/Models/Post.php
+    // public function getCreatedAtAttribute($value)
+    // {
+    //     return \Carbon\Carbon::parse($value)->format('d/m/Y');
+    // }
 
-    public function getCreatedAtAttribute($value)
+    protected function createdAt(): Attribute
     {
-        return \Carbon\Carbon::parse($value)->format('d/m/Y');
+        return Attribute::make(
+            get: fn (string $value) => \Carbon\Carbon::parse($value)->format('d/m/Y'),
+        );
     }
 
     public function user(): BelongsTo
