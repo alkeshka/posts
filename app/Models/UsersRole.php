@@ -27,4 +27,14 @@ class UsersRole extends Model
     protected $casts = [
         'id' => 'integer',
     ];
+
+    /**
+     * Retrieve the ID of the normal user role.
+     *
+     * @return int
+     */
+    public static function getNormalUserRoleTypeId()
+    {
+        return UsersRole::where('role_type', User::ROLE_USER)->value('id');
+    }
 }

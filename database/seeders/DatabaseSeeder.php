@@ -34,7 +34,7 @@ class DatabaseSeeder extends Seeder
             'remember_token' => '',
             'first_name' => 'Admin',
             'last_name' => 'User',
-            'users_role_type' => $adminRole->role_type,
+            'users_role_type_id' => $adminRole->id,
         ]);
     }
 }

@@ -25,7 +25,7 @@ class User extends Authenticatable
     protected $fillable = [
         'first_name',
         'last_name',
-        'users_role_type',
+        'users_role_type_id',
         'email',
         'password',
     ];
@@ -68,6 +68,11 @@ class User extends Authenticatable
         return $this->whereHas('posts');
     }
 
+    /**
+     * Check if the authenticated user is an admin.
+     *
+     * @return bool
+     */
     public function scopeIsAdmin()
     {
         return Auth::user()->users_role_type == User::ROLE_ADMIN;

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreUserRequest;
 use App\Models\User;
+use App\Models\UsersRole;
 use Illuminate\Support\Facades\Auth;
 
 class RegisteredUserController extends Controller
@@ -21,11 +22,8 @@ class RegisteredUserController extends Controller
      */
     public function store(StoreUserRequest $request)
     {
-        $validatedAttributes = $request->validated();
 
-        // use function instead of User::ROLE_USER
-        $dbData = array_merge($validatedAttributes, ['users_role_type' => User::ROLE_USER]);
-        $user = User::create($dbData);
+        $user = User::create($request->validated() + ['users_role_type_id' => UsersRole::getNormalUserRoleTypeId()]);
 
         Auth::login($user);
 
