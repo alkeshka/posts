@@ -7,7 +7,7 @@
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <title>Blog Posts</title></title>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-        
+
         @if (request()->is('/'))
             <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
             <script src="./js/script.js"></script>
@@ -17,7 +17,7 @@
     </head>
     <body class="h-full">
         <div class="min-h-full">
-            
+
         <nav class="bg-gray-800">
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div class="flex h-16 items-center justify-between">
@@ -43,14 +43,14 @@
                 </div>
                 <div class="hidden md:block">
                 <div class="ml-4 flex items-center md:ml-6">
-                    
+
                     <!-- Profile dropdown -->
                     <div class="relative ml-3">
                         <div class="text-white">
                             @auth
                                 <span>Hi, {{ Auth::user()->first_name }}</span>
                                 <span class="ml-2" > | </span>
-                               <a class="ml-2" href="/posts/create">Create a post</a>
+                               <a class="ml-2" href="/posts/create">Create a Post</a>
                                 <span class="ml-2" > | </span>
                                 <div class="inline-block ml-2">
                                     <form action="/logout" method="POST">
@@ -114,12 +114,12 @@
                     </svg>
                 </button>
                 </div>
-                
+
             </div>
             </div>
         </nav>
 
-        @if ($header)  
+        @if ($header)
             <x-header> {{ $header }} </x-header>
         @endif
         <main>

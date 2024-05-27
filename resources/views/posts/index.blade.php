@@ -62,13 +62,13 @@
                                 <i class="fa fa-eye" style="font-size:18px"></i></a>
                             @auth
 
-                                @if ( Auth::id() == $post->user_id || Auth::user()->users_role_type == \App\Models\User::ROLE_ADMIN )
+                                @if ( Auth::id() == $post->user_id || \App\Models\User::isAdmin() )
                                     <a href="/posts/{{ $post->id }}/edit" class="font-medium text-blue-600 text-blue-500 hover:underline">
                                         <i class="fa fa-edit" style="font-size:18px"></i>
                                     </a>
                                 @endif
 
-                                @if ( Auth::user()->users_role_type == \App\Models\User::ROLE_ADMIN )
+                                @if ( \App\Models\User::isAdmin() )
                                     <a onclick="return confirm('Are you sure?')" href="/posts/{{ $post->id }}/delete" class="font-medium text-blue-600 text-blue-500 hover:underline">
                                         <i class="fa fa-trash-o text-red-500" style="font-size:18px"></i>
                                     </a>
