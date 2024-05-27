@@ -57,7 +57,7 @@ class FilterService
     public function applyPublishedDateFilter($postQuery, $publishedDate)
     {
         if ($publishedDate) {
-            $formattedDate = $this->dateService->formatDate($publishedDate);
+            $formattedDate = $this->dateService->parseDate($publishedDate);
             return $postQuery->whereDate('created_at', '=', $formattedDate);
         }
 

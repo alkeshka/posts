@@ -1,10 +1,10 @@
 <x-layout header="{{ $post->title }}" >
+
     <x-breadcrumb breadcrumbsName="view" :model="$post" />
 
     @if (session('status'))
         <x-flash-messages message="{{ session('status')['message'] }}" class="{{ session('status')['type'] }}" ></x-flash-messages>
     @endif
-
 
     <section >
         <div>
@@ -49,7 +49,7 @@
                 </div>
                 <p class="text-sm leading-relaxed ">{{ $comment->body }}</p>
                 @auth
-                    @if ($comment->user->id === Auth::user()->id || Auth::user()->users_role_id === 1)
+                    @if ($comment->user->id === Auth::user()->id || Auth::user()->users_role_type == \App\Models\User::ROLE_ADMIN)
                         <div class="flex justify-end">
                             <form method="post" action="/comments/{{ $comment->id }}/delete">
                                 @csrf
