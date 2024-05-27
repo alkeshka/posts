@@ -65,14 +65,14 @@ class PostsController extends Controller
      */
     public function store(StorePostRequest $request)
     {
-        // $validatedAttributes = $request->validated();
+        $validatedAttributes = $request->validated();
 
         $thumbnailPath = $request->thumbnail->store('thumbnail', 'public');
 
         $validatedAttributes['thumbnail'] = $thumbnailPath;
+        $validatedAttributes['user_id']   = Auth::id();
 
-        // direct create post
-        $post = Auth::user()->posts()->create(Arr::except($validatedAttributes, 'categories'));
+        $post = Posts::create(Arr::except($validatedAttributes, 'categories'));
 
         if ($validatedAttributes['categories'] ?? false) {
             $this->postService->attachTags($post, $validatedAttributes['categories']);
@@ -109,7 +109,6 @@ class PostsController extends Controller
      */
     public function update(UpdatePostRequest $request, Posts $post)
     {
-        // conform on this line of code
         $validatedAttributes = $request->validated();
 
         if ($request->hasFile('thumbnail')) {
@@ -128,6 +127,7 @@ class PostsController extends Controller
      */
     public function destroy(Posts $post)
     {
+        // delete the connected tags also
         if (User::isAdmin()) {
             $post->delete();
         }

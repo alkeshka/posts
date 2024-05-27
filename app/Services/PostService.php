@@ -22,20 +22,15 @@ class PostService
 
     public function tagsSync($validatedTags, $post)
     {
-        // sync function in laravel 
-        $existingTags = explode(',', $post->tags->pluck('name')->implode(','));
-        $currentTags  = explode(',', $validatedTags);
+        $tagNames = explode(',', $validatedTags);
+        $tagIds = [];
 
-        $deletedTags = array_diff($existingTags, $currentTags);
-        $addedTags   = array_diff($currentTags, $existingTags);
-
-        foreach ($deletedTags as $tag) {
-            $post->untag($tag);
+        foreach ($tagNames as $name) {
+            $tag = Tags::firstOrCreate(['name' => trim($name)]);
+            $tagIds[] = $tag->id;
         }
 
-        foreach ($addedTags as $tag) {
-            $post->tag($tag);
-        }
+        $post->tags()->sync($tagIds);
     }
 
     public function replaceThumbnail($thumbnail, $post)
