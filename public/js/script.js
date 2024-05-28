@@ -57,7 +57,7 @@ $(document).ready(function() {
         var publishedDate = $('#publishedDate').val();
         var searchQuery = $('#searchQuery').val();
 
-        const isLoggedIn = $('#isLoggedIn').val();odal Title
+        const isLoggedIn = $('#isLoggedIn').val();
         const userId = $('#userId').val();
         const userRoleId = $('#userRoleId').val();
 
@@ -93,7 +93,7 @@ $(document).ready(function() {
                             ${ post.user.first_name + " " + post.user.last_name }
                         </td>
                         <td class="px-6 py-4">
-                           <button onclick="loadComments({{ $post->id }})">
+                           <button onclick="loadComments(${ post.id })">
                                 ${ post.comments_count }
                             </button>
                         </td>
