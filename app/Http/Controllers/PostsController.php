@@ -35,7 +35,7 @@ class PostsController extends Controller
      */
     public function index()
     {
-        $postsWithDetails = $this->postService->getPostsBasedOnUser()->paginate(2);
+        // $postsWithDetails = $this->postService->getPostsBasedOnUser()->paginate(2);
 
         $postAuthors = $this->postService->getPostAuthors();
         $tags = $this->postService->getTags();
@@ -47,7 +47,7 @@ class PostsController extends Controller
             'postAuthors' => $postAuthors,
             'tags' => $tags,
             'publishedDates' => $publishedDates,
-            'posts' => $postsWithDetails,
+            // 'posts' => $postsWithDetails,
         ]);
     }
 
@@ -143,49 +143,48 @@ class PostsController extends Controller
 
         $limit = $request->input('length');
         $start = $request->input('start');
-        $order = $columns[$request->input('order.0.column')];
+        $orderColumnIndex = $request->input('order.0.column');
+        $order = $columns[$orderColumnIndex];
         $dir = $request->input('order.0.dir');
 
-        if (empty($request->input('search.value'))) {
-            $posts = Posts::with('user', 'tags')
-                        ->withCount('comments')
-                        ->offset($start)
-                        ->limit($limit)
-                        ->orderBy($order, $dir)
-                        ->get();
-        } else {
-            $search = $request->input('search.value');
+        $query = Posts::with('user', 'tags')
+            ->select('posts.*')->withCount('comments');
 
-            $posts = Posts::with('user', 'tags')
-            ->where('title', 'LIKE', "%{$search}%")
-            ->orWhereHas('user', function ($query) use ($search) {
-                $query->where('first_name', 'LIKE', "%{$search}%")
-                ->orWhere('last_name', 'LIKE', "%{$search}%");
-            })
-                ->orWhereHas('tags', function ($query) use ($search) {
-                    $query->where('name', 'LIKE', "%{$search}%");
-                })
-                ->offset($start)
-                ->limit($limit)
-                ->orderBy($order, $dir)
-                ->get();
-
-            $totalFiltered = Posts::with('user', 'tags')
-            ->where('title', 'LIKE', "%{$search}%")
-            ->orWhereHas('user', function ($query) use ($search) {
-                $query->where('first_name', 'LIKE', "%{$search}%")
-                ->orWhere('last_name', 'LIKE', "%{$search}%");
-            })
-                ->orWhereHas('tags', function ($query) use ($search) {
-                    $query->where('name', 'LIKE', "%{$search}%");
-                })
-                ->count();
+        // Apply minimum comments filter
+        if ($request->has('noOfComments') && $request->input('noOfComments') != '') {
+            $noOfComments = $request->input('noOfComments');
+            $query->where('comments_count', '=', (int) $noOfComments);
         }
+
+        if ($request->has('searchQuery') && $request->input('searchQuery') != '') {
+            $search = $request->input('searchQuery');
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'LIKE', "%{$search}%");
+            });
+        }
+
+
+        if ($request->has('author') && $request->input('author') != '') {
+            $query->where('user_id', $request->author);
+        }
+
+        if ($request->has('category') && $request->input('category') != '') {
+            $tagId = $request->category;
+            $query->whereHas('tags', function ($q) use ($tagId) {
+                $q->where('tags.id', $tagId);
+            });
+        }
+
+        $posts = $query->offset($start)
+            ->limit($limit)
+            ->orderBy($order, $dir)
+            ->get();
+
+        $totalFiltered = $query->count();
 
         $data = array();
         if (!empty($posts)) {
             foreach ($posts as $index => $post) {
-                // $nestedData['id'] = $post->id;
                 $nestedData['id'] = $index + 1;
                 $nestedData['title'] = $post->title;
                 $nestedData['author'] = $post->user->first_name . ' ' . $post->user->last_name;
@@ -193,9 +192,9 @@ class PostsController extends Controller
                 $nestedData['tags'] = $post->tags->pluck('name')->implode(', ');
                 $nestedData['created_at'] = $post->created_at;
                 $nestedData['actions'] = '
-                    <a href="/posts/' . $post->id . '" class="font-medium text-blue-600 text-blue-500 hover:underline"><i class="fa fa-eye" style="font-size:18px"></i></a>
-                    ' . (auth()->check() && (auth()->id() == $post->user_id || User::isAdmin()) ? '<a href="/posts/' . $post->id . '/edit" class="font-medium text-blue-600 text-blue-500 hover:underline"><i class="fa fa-edit" style="font-size:18px"></i></a>' : '') . '
-                    ' . (auth()->check() && User::isAdmin() ? '<a onclick="return confirm(\'Are you sure?\')" href="/posts/' . $post->id . '/delete" class="font-medium text-blue-600 text-blue-500 hover:underline"><i class="fa fa-trash-o text-red-500" style="font-size:18px"></i></a>' : '');
+                <a href="/posts/' . $post->id . '" class="font-medium text-blue-600 text-blue-500 hover:underline"><i class="fa fa-eye" style="font-size:18px"></i></a>
+                ' . (auth()->check() && (auth()->id() == $post->user_id || User::isAdmin()) ? '<a href="/posts/' . $post->id . '/edit" class="font-medium text-blue-600 text-blue-500 hover:underline"><i class="fa fa-edit" style="font-size:18px"></i></a>' : '') . '
+                ' . (auth()->check() && User::isAdmin() ? '<a onclick="return confirm(\'Are you sure?\')" href="/posts/' . $post->id . '/delete" class="font-medium text-blue-600 text-blue-500 hover:underline"><i class="fa fa-trash-o text-red-500" style="font-size:18px"></i></a>' : '');
 
                 $data[] = $nestedData;
             }

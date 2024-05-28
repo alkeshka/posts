@@ -6,7 +6,7 @@
     <select name="author" id="author" class="ml-8 border border-gray-300 rounded-md p-3 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
         <option value="">Filter by Author</option>
         @foreach ($postAuthors as $postAuthor)
-            <option value="{{ $postAuthor->id }}">{{ $postAuthor->first_name . ' '. $postAuthor->last_name }}</option>
+            <option class="capitalize" value="{{ $postAuthor->id }}">{{ $postAuthor->first_name . ' '. $postAuthor->last_name }}</option>
         @endforeach
     </select>
 

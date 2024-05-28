@@ -16,27 +16,42 @@
 
 <script>
 $(document).ready(function() {
-    // Include CSRF token in AJAX setup
-    // $.ajaxSetup({
-    //     headers: {
-    //         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-    //     }
-    // });
+    // Include CSRF token in AJAX setup if needed
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
 
-    $('#postsTable').DataTable({
+    var table = $('#postsTable').DataTable({
         processing: true,
         serverSide: true,
-        ajax: "{{ route('posts.data') }}", // Use a string for the AJAX URL
+        searching: false,
+        ajax: {
+            url: "{{ route('posts.data') }}",
+            data: function(d) {
+                d.noOfComments = $('#noOfComments').val();
+                d.searchQuery = $('#searchQuery').val();
+                d.category = $('#category').val();
+                d.author = $('#author').val();
+            }
+        },
         columns: [
-            { data: 'id', name: 'id' },
-            { data: 'title', name: 'title' },
-            { data: 'author', name: 'author', orderable: false, searchable: false },
+            { data: 'id', name: 'id', searchable: false, },
+            { data: 'title', name: 'title', searchable: false },
+            { data: 'author', name: 'author', orderable: false, searchable: false, class: 'capitalize'},
             { data: 'comments_count', name: 'comments_count', orderable: false, searchable: false },
             { data: 'tags', name: 'tags', orderable: false, searchable: false },
             { data: 'created_at', name: 'created_at' },
             { data: 'actions', name: 'actions', orderable: false, searchable: false }
         ],
-        order: [[0, 'desc']]
+        order: [[0, 'desc']],
+        dom: '<"top"b>rt<"bottom"lp><"clear">',
+    });
+
+    // Event listener to redraw DataTable on input change
+    $('#noOfComments, #searchQuery, #category, #author').on('keyup change', function() {
+        table.draw();
     });
 });
 </script>

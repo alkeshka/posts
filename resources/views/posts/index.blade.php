@@ -82,9 +82,9 @@
         </table>
     </div> --}}
 
-    <div class="mt-3 text-white">
+    {{-- <div class="mt-3 text-white">
         {{ $posts->links() }}
-    </div>
+    </div> --}}
 
 </x-layout>
 
