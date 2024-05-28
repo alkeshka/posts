@@ -29,15 +29,10 @@ class PostRepository implements PostRepositoryInterface
             ->values();
     }
 
-    public function getPostsCommentsCounts()
-    {
-        return Posts::withCount('comments')->orderBy('comments_count', 'asc')->pluck('comments_count')->unique()->values();
-    }
-
     public function getUsersOwnedAndPublishedPosts($userId)
     {
         // get posts function user conditions to be here
-        
+
         return Posts::allWithDetails()->where(function ($query) use ($userId) {
                 $query->where('user_id', $userId)
                     ->orWhere('status', 1);

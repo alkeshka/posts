@@ -71,14 +71,6 @@ class PostService
         });
     }
 
-    public function getCommentsCounts()
-    {
-        $cacheKey = 'commentsCounts';
-        return Cache::remember($cacheKey, 60, function () {
-            return $this->postRepository->getPostsCommentsCounts();
-        });
-    }
-
     public function getPostsBasedOnUser()
     {
         if (!Auth::check()) {

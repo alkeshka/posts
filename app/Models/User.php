@@ -14,8 +14,8 @@ class User extends Authenticatable
     use HasFactory;
     use Notifiable;
 
-    const ROLE_ADMIN = 'admin';
-    const ROLE_USER  = 'user';
+    const ROLE_ADMIN = 1;
+    const ROLE_USER  = 2;
 
     /**
      * The attributes that are mass assignable.
@@ -75,6 +75,6 @@ class User extends Authenticatable
      */
     public function scopeIsAdmin()
     {
-        return Auth::user()->users_role_type == User::ROLE_ADMIN;
+        return Auth::user()->users_role_type_id == User::ROLE_ADMIN;
     }
 }

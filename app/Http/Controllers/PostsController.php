@@ -41,14 +41,12 @@ class PostsController extends Controller
 
         // remove it from here
         $publishedDates = $this->postService->getPublishedDates();
-        $commentsCounts = $this->postService->getCommentsCounts();
 
         return view('posts.index', [
             'postAuthors' => $postAuthors,
             'tags' => $tags,
             'publishedDates' => $publishedDates,
             'posts' => $postsWithDetails,
-            'commentsCounts' => $commentsCounts
         ]);
     }
 
