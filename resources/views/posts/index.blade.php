@@ -43,7 +43,7 @@
                         <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap ">
                             {{ $post->title }}
                         </th>
-                        <td class="px-6 py-4 capitalize">
+                        <td class="px-6 py-4">
                             {{ $post->user->first_name . ' ' . $post->user->last_name  }}
                         </td>
                         <td class="px-6 py-4">

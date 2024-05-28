@@ -46,7 +46,7 @@
 
 
     <div class="inline-block">
-        <input type="text" class="ml-2 rounded-md p-3" placeholder="Enter the no. of comments" id="noOfComments" name="noOfComments" >
+        <input type="number" class="ml-2 rounded-md p-3" placeholder="Enter the no. of comments" id="noOfComments" name="noOfComments" >
     </div>
 
     <div class="inline-block">

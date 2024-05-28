@@ -8,11 +8,23 @@ use Illuminate\Validation\ValidationException;
 
 class SessionController extends Controller
 {
+    /**
+     * Show the login view.
+     *
+     * @return View
+     */
     public function create()
     {
         return view('auth.login');
     }
 
+    /**
+     * Handle an authentication attempt.
+     *
+     * @param StoreSessionRequest $request
+     * @return RedirectResponse
+     * @throws ValidationException
+     */
     public function store(StoreSessionRequest $request)
     {
         $validatedValues = $request->validated();
@@ -28,6 +40,11 @@ class SessionController extends Controller
         return redirect('/');
     }
 
+    /**
+     * Log the user out.
+     *
+     * @return RedirectResponse
+     */
     public function destroy()
     {
         auth()->logout();
