@@ -34,6 +34,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/comments/{comment}/delete', [CommentsController::class, 'destroy']);
 });
 
+Route::get('/posts/data', [PostsController::class, 'getPostsData'])->name('posts.data');
+
 Route::get('/posts/{post}', [PostsController::class, 'show'])->name('view');
 Route::get('/comments/{post:id}', [CommentsController::class, 'index']);
 

@@ -7,7 +7,8 @@
 
 <x-post-filters :postAuthors="$postAuthors" :tags="$tags" :publishedDates="$publishedDates" />
 
-    <div class="relative overflow-x-auto shadow-md sm:rounded-lg ">
+    <x-posts-table />
+    {{-- <div class="relative overflow-x-auto shadow-md sm:rounded-lg ">
         <table class="w-full text-sm text-left rtl:text-right text-gray-500 text-gray-400">
             <thead class="text-xs uppercase bg-gray-50 bg-gray-700 text-white">
                 <tr>
@@ -79,7 +80,7 @@
                 @endforeach
             </tbody>
         </table>
-    </div>
+    </div> --}}
 
     <div class="mt-3 text-white">
         {{ $posts->links() }}

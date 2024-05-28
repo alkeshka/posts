@@ -10,6 +10,7 @@ use App\Repositories\PostRepository;
 use App\Services\PostService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Arr;
+use Illuminate\Http\Request;
 
 class PostsController extends Controller
 {
@@ -132,5 +133,83 @@ class PostsController extends Controller
 
         return redirect('/');
     }
+
+    public function getPostsData(Request $request)
+    {
+        $columns = ['id', 'title', 'author', 'comments_count', 'tags', 'created_at', 'actions'];
+
+        $totalData = Posts::count();
+        $totalFiltered = $totalData;
+
+        $limit = $request->input('length');
+        $start = $request->input('start');
+        $order = $columns[$request->input('order.0.column')];
+        $dir = $request->input('order.0.dir');
+
+        if (empty($request->input('search.value'))) {
+            $posts = Posts::with('user', 'tags')
+                        ->withCount('comments')
+                        ->offset($start)
+                        ->limit($limit)
+                        ->orderBy($order, $dir)
+                        ->get();
+        } else {
+            $search = $request->input('search.value');
+
+            $posts = Posts::with('user', 'tags')
+            ->where('title', 'LIKE', "%{$search}%")
+            ->orWhereHas('user', function ($query) use ($search) {
+                $query->where('first_name', 'LIKE', "%{$search}%")
+                ->orWhere('last_name', 'LIKE', "%{$search}%");
+            })
+                ->orWhereHas('tags', function ($query) use ($search) {
+                    $query->where('name', 'LIKE', "%{$search}%");
+                })
+                ->offset($start)
+                ->limit($limit)
+                ->orderBy($order, $dir)
+                ->get();
+
+            $totalFiltered = Posts::with('user', 'tags')
+            ->where('title', 'LIKE', "%{$search}%")
+            ->orWhereHas('user', function ($query) use ($search) {
+                $query->where('first_name', 'LIKE', "%{$search}%")
+                ->orWhere('last_name', 'LIKE', "%{$search}%");
+            })
+                ->orWhereHas('tags', function ($query) use ($search) {
+                    $query->where('name', 'LIKE', "%{$search}%");
+                })
+                ->count();
+        }
+
+        $data = array();
+        if (!empty($posts)) {
+            foreach ($posts as $index => $post) {
+                // $nestedData['id'] = $post->id;
+                $nestedData['id'] = $index + 1;
+                $nestedData['title'] = $post->title;
+                $nestedData['author'] = $post->user->first_name . ' ' . $post->user->last_name;
+                $nestedData['comments_count'] = '<button onclick="loadComments(' . $post->id . ')">' . $post->comments_count . '</button>';
+                $nestedData['tags'] = $post->tags->pluck('name')->implode(', ');
+                $nestedData['created_at'] = $post->created_at;
+                $nestedData['actions'] = '
+                    <a href="/posts/' . $post->id . '" class="font-medium text-blue-600 text-blue-500 hover:underline"><i class="fa fa-eye" style="font-size:18px"></i></a>
+                    ' . (auth()->check() && (auth()->id() == $post->user_id || User::isAdmin()) ? '<a href="/posts/' . $post->id . '/edit" class="font-medium text-blue-600 text-blue-500 hover:underline"><i class="fa fa-edit" style="font-size:18px"></i></a>' : '') . '
+                    ' . (auth()->check() && User::isAdmin() ? '<a onclick="return confirm(\'Are you sure?\')" href="/posts/' . $post->id . '/delete" class="font-medium text-blue-600 text-blue-500 hover:underline"><i class="fa fa-trash-o text-red-500" style="font-size:18px"></i></a>' : '');
+
+                $data[] = $nestedData;
+            }
+        }
+
+        $json_data = array(
+            "draw"            => intval($request->input('draw')),
+            "recordsTotal"    => intval($totalData),
+            "recordsFiltered" => intval($totalFiltered),
+            "data"            => $data
+        );
+
+        return response()->json($json_data);
+    }
+
 
 }
