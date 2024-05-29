@@ -50,7 +50,7 @@ class FilterService
 
     public function applyTagFilter($postQuery, $category)
     {
-        if ($category !== null && $category !== '') { // Ensure $category is not null and not an empty string
+        if ($category !== null && $category !== '') { 
             $postQuery->whereHas('tags', function ($q) use ($category) {
                 $q->where('tags.id', $category);
             });
@@ -67,9 +67,9 @@ class FilterService
      */
     public function applyCommentCountFilter($postQuery, $noOfComments)
     {
-        if ($noOfComments && $noOfComments != '') {
-            $noOfComments = $noOfComments;
-            $postQuery->where('comments_count', '=', (int) $noOfComments);
+        if ($noOfComments !== null && $noOfComments !== '') {
+            $noOfComments = (int) $noOfComments;
+            $postQuery->where('comments_count', '=', $noOfComments);
         }
         return $postQuery;
     }

@@ -6,7 +6,6 @@ use App\Models\Posts;
 use App\Models\Tags;
 use App\Models\User;
 use App\Repositories\PostRepository;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 
@@ -77,7 +76,14 @@ class PostService
         $post->tags()->detach();
         $post->delete();
     }
-
+    
+    /**
+     * Applies sorting to the given post list based on the request parameters.
+     *
+     * @param Request $request The HTTP request object containing the sorting parameters.
+     * @param Builder $postLists The query builder for the post list.
+     * @return Builder The modified query builder with the applied sorting.
+     */
     public function applySorting($request, $postLists)
     {
         $columns = ['id', 'title', 'user.first_name', 'comments_count', 'tags', 'created_at', 'actions'];
