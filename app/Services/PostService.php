@@ -13,7 +13,13 @@ class PostService
 {
     protected $postRepository;
     protected $filterService;
-
+    
+    /**
+     * Constructs a new instance of the class.
+     *
+     * @param PostRepository $postRepository The repository for posts.
+     * @param FilterService $filterService The service for filtering.
+     */
     public function __construct(
         PostRepository $postRepository,
         FilterService $filterService
@@ -22,6 +28,13 @@ class PostService
         $this->filterService = $filterService;
     }
 
+    /**
+     * Synchronizes the tags of a post with the provided validated tags.
+     *
+     * @param string $validatedTags The comma-separated list of validated tags.
+     * @param Post $post The post to synchronize the tags with.
+     * @return void
+     */
     public function tagsSync($validatedTags, $post)
     {
         $tagNames = explode(',', $validatedTags);
@@ -35,6 +48,13 @@ class PostService
         $post->tags()->sync($tagIds);
     }
 
+    /**
+     * Replaces the thumbnail of a post with a new thumbnail.
+     *
+     * @param mixed $thumbnail The new thumbnail to replace the existing one.
+     * @param mixed $post The post whose thumbnail needs to be replaced.
+     * @return string The path of the newly stored thumbnail.
+     */
     public function replaceThumbnail($thumbnail, $post)
     {
         Storage::delete($post->thumbnail);
@@ -42,6 +62,13 @@ class PostService
         return $thumbnailPath;
     }
 
+    /**
+     * Attaches tags to a given post.
+     *
+     * @param mixed $post The post to attach tags to.
+     * @param string $tags The tags to attach, separated by commas.
+     * @return void
+     */
     public function attachTags($post, $tags)
     {
         foreach (explode(',', $tags) as $tag) {
@@ -49,6 +76,11 @@ class PostService
         }
     }
 
+    /**
+     * Retrieves the authors of posts from the cache or the database if not present.
+     *
+     * @return \Illuminate\Database\Eloquent\Collection The collection of post authors.
+     */
     public function getPostAuthors()
     {
         $cacheKey = 'postAuthors';
@@ -57,6 +89,11 @@ class PostService
         });
     }
 
+    /**
+     * Retrieves the tags from the cache or database if not present.
+     *
+     * @return \Illuminate\Database\Eloquent\Collection The collection of tags.
+     */
     public function getTags()
     {
         $cacheKey = 'tags';
@@ -76,7 +113,7 @@ class PostService
         $post->tags()->detach();
         $post->delete();
     }
-    
+
     /**
      * Applies sorting to the given post list based on the request parameters.
      *
@@ -103,6 +140,13 @@ class PostService
 
     }
 
+    /**
+     * Retrieves a paginated list of posts based on the given request and query builder.
+     *
+     * @param Request $request The HTTP request object containing the pagination parameters.
+     * @param Builder $postLists The query builder for the post list.
+     * @return Collection The paginated list of posts.
+     */
     public function getPaginate($request, $postLists)
     {
         $limit = $request->input('length');
@@ -114,6 +158,12 @@ class PostService
         return $posts;
     }
 
+    /**
+     * Formats the given posts data into a nested array structure for display.
+     *
+     * @param Collection $posts The collection of posts to format.
+     * @return array The formatted posts data.
+     */
     public function getFormatData($posts)
     {
         $data = array();
@@ -137,6 +187,19 @@ class PostService
         return $data;
     }
 
+    /**
+     * Creates a JSON response with the given data.
+     *
+     * @param mixed $request The HTTP request object.
+     * @param int $totalPostsCount The total count of posts.
+     * @param int $filteredPostsCount The count of posts after applying filters.
+     * @param array $formattedData The formatted data to be included in the response.
+     * @return array The JSON response with the following keys:
+     * - "draw": The value of the 'draw' parameter from the request.
+     * - "recordsTotal": The total count of posts.
+     * - "recordsFiltered": The count of posts after applying filters.
+     * - "data": The formatted data to be included in the response.
+     */
     public function createJsonResponse($request, $totalPostsCount, $filteredPostsCount, $formattedData)
     {
         return [
