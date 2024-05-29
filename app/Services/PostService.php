@@ -63,14 +63,6 @@ class PostService
         });
     }
 
-    public function getPublishedDates()
-    {
-        $cacheKey = 'publishedDates';
-        return Cache::remember($cacheKey, 60, function () {
-            return $this->postRepository->getFormattedPublishedDates();
-        });
-    }
-
     public function getPostsBasedOnUser()
     {
         if (!Auth::check()) {

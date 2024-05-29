@@ -4,12 +4,10 @@ namespace App\Repositories;
 
 use App\Models\Posts;
 use App\Services\DateService;
-use Carbon\Carbon;
-use Illuminate\Support\Collection;
 
 interface PostRepositoryInterface
 {
-    public function getFormattedPublishedDates(): Collection;
+    public function getUsersOwnedAndPublishedPosts($userId);
 }
 
 class PostRepository implements PostRepositoryInterface
@@ -19,14 +17,6 @@ class PostRepository implements PostRepositoryInterface
     public function __construct(DateService $dateService)
     {
         $this->dateService = $dateService;
-    }
-
-    public function getFormattedPublishedDates(): Collection
-    {
-        return Posts::where('status', 1)
-            ->pluck('created_at')
-            ->unique()
-            ->values();
     }
 
     public function getUsersOwnedAndPublishedPosts($userId)

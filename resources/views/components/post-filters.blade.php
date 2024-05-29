@@ -1,4 +1,4 @@
-@props(['postAuthors', 'tags', 'publishedDates', 'commentsCounts' , 'authUserRoleId'])
+@props(['postAuthors', 'tags', 'authUserRoleId'])
 
 <div class="mb-2 flex">
 
@@ -21,14 +21,6 @@
         $currentDate = \Carbon\Carbon::now()->format('m/d/Y');
     @endphp
     <input type="text" name="publishedDateRange" id="publishedDateRange" placeholder="Select the date" class="ml-1 border border-gray-300 rounded-md p-3 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"/>
-
-    {{-- <select name="publishedDate" id="publishedDate" class="ml-1 border border-gray-300 rounded-md p-3 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-        <option value="">Filter by published date</option>
-        @foreach ($publishedDates as $publishedDate)
-            <option value="{{ $publishedDate }}">{{ $publishedDate }}</option>
-        @endforeach
-    </select> --}}
-
 
     <div class="inline-block">
         <input type="number" class="ml-4 rounded-md p-3" placeholder="Enter the no. of comments" id="noOfComments" name="noOfComments" >

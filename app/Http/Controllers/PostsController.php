@@ -36,19 +36,12 @@ class PostsController extends Controller
      */
     public function index()
     {
-        // $postsWithDetails = $this->postService->getPostsBasedOnUser()->paginate(2);
-
         $postAuthors = $this->postService->getPostAuthors();
         $tags = $this->postService->getTags();
-
-        // remove it from here
-        $publishedDates = $this->postService->getPublishedDates();
 
         return view('posts.index', [
             'postAuthors' => $postAuthors,
             'tags' => $tags,
-            'publishedDates' => $publishedDates,
-            // 'posts' => $postsWithDetails,
         ]);
     }
 
@@ -144,19 +137,17 @@ class PostsController extends Controller
 
         $limit = $request->input('length');
         $start = $request->input('start');
-        $orderColumnIndex = $request->input('order.0.column', 0); // Default to first column if not provided
+        $orderColumnIndex = $request->input('order.0.column', 0);
         $order = $columns[$orderColumnIndex];
-        $dir = $request->input('order.0.dir', 'desc'); // Default to descending if not provided
+        $dir = $request->input('order.0.dir', 'desc');
 
-        // Adjust the query for sorting by author
         $query = Posts::with('user', 'tags')
-            ->withCount('comments')
-            ->select('posts.*');
+                    ->withCount('comments');
 
         if ($order === 'user.first_name') {
             $query->join('users', 'posts.user_id', '=', 'users.id')
                 ->orderBy('users.first_name', $dir)
-                ->orderBy('users.last_name', $dir); // Optionally, order by last name as well
+                ->orderBy('users.last_name', $dir);
         } else {
             $query->orderBy($order, $dir);
         }
@@ -172,7 +163,6 @@ class PostsController extends Controller
             }
         }
 
-        // Apply minimum comments filter
         if ($request->has('noOfComments') && $request->input('noOfComments') != '') {
             $noOfComments = $request->input('noOfComments');
             $query->having('comments_count', '>=', (int) $noOfComments);
@@ -201,6 +191,8 @@ class PostsController extends Controller
         $posts = $query->offset($start)
             ->limit($limit)
             ->get();
+
+
 
         $data = array();
         if (!empty($posts)) {
