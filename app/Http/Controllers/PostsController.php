@@ -8,6 +8,7 @@ use App\Models\Posts;
 use App\Models\User;
 use App\Repositories\PostRepository;
 use App\Services\PostService;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
@@ -136,24 +137,45 @@ class PostsController extends Controller
 
     public function getPostsData(Request $request)
     {
-        $columns = ['id', 'title', 'author', 'comments_count', 'tags', 'created_at', 'actions'];
+        $columns = ['id', 'title', 'user.first_name', 'comments_count', 'tags', 'created_at', 'actions'];
 
         $totalData = Posts::count();
         $totalFiltered = $totalData;
 
         $limit = $request->input('length');
         $start = $request->input('start');
-        $orderColumnIndex = $request->input('order.0.column');
+        $orderColumnIndex = $request->input('order.0.column', 0); // Default to first column if not provided
         $order = $columns[$orderColumnIndex];
-        $dir = $request->input('order.0.dir');
+        $dir = $request->input('order.0.dir', 'desc'); // Default to descending if not provided
 
+        // Adjust the query for sorting by author
         $query = Posts::with('user', 'tags')
-            ->select('posts.*')->withCount('comments');
+            ->withCount('comments')
+            ->select('posts.*');
+
+        if ($order === 'user.first_name') {
+            $query->join('users', 'posts.user_id', '=', 'users.id')
+                ->orderBy('users.first_name', $dir)
+                ->orderBy('users.last_name', $dir); // Optionally, order by last name as well
+        } else {
+            $query->orderBy($order, $dir);
+        }
+
+        if ($request->has('publishedDateRangeStart') && $request->has('publishedDateRangeEnd')) {
+            $publishedDateRangeStart = $request->input('publishedDateRangeStart');
+            $publishedDateRangeEnd = $request->input('publishedDateRangeEnd');
+
+            if (!is_null($publishedDateRangeStart) && !is_null($publishedDateRangeEnd)) {
+                $startDate = Carbon::parse($publishedDateRangeStart);
+                $endDate = Carbon::parse($publishedDateRangeEnd);
+                $query->whereBetween('created_at', [$startDate, $endDate]);
+            }
+        }
 
         // Apply minimum comments filter
         if ($request->has('noOfComments') && $request->input('noOfComments') != '') {
             $noOfComments = $request->input('noOfComments');
-            $query->where('comments_count', '=', (int) $noOfComments);
+            $query->having('comments_count', '>=', (int) $noOfComments);
         }
 
         if ($request->has('searchQuery') && $request->input('searchQuery') != '') {
@@ -162,7 +184,6 @@ class PostsController extends Controller
                 $q->where('title', 'LIKE', "%{$search}%");
             });
         }
-
 
         if ($request->has('author') && $request->input('author') != '') {
             $query->where('user_id', $request->author);
@@ -175,12 +196,11 @@ class PostsController extends Controller
             });
         }
 
+        $totalFiltered = $query->count();
+
         $posts = $query->offset($start)
             ->limit($limit)
-            ->orderBy($order, $dir)
             ->get();
-
-        $totalFiltered = $query->count();
 
         $data = array();
         if (!empty($posts)) {
@@ -209,6 +229,7 @@ class PostsController extends Controller
 
         return response()->json($json_data);
     }
+
 
 
 }
