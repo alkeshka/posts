@@ -6,6 +6,7 @@ use App\Models\Posts;
 use App\Models\Tags;
 use App\Models\User;
 use App\Repositories\PostRepository;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
@@ -76,6 +77,18 @@ class PostService
         }
 
         return $this->postRepository->getUsersOwnedAndPublishedPosts($authUser->id);
+    }
+
+    /**
+     * Deletes a post along with its associated tags.
+     *
+     * @param Posts $post The post to be deleted.
+     * @return void
+     */
+    public function deletePostWithTags(Posts $post): void
+    {
+        $post->tags()->detach();
+        $post->delete();
     }
 
 }

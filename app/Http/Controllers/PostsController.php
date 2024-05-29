@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Repositories\PostRepository;
 use App\Services\PostService;
 use Carbon\Carbon;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
@@ -118,15 +119,14 @@ class PostsController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Posts $post)
+    public function destroy(Posts $post): RedirectResponse
     {
-        // delete the connected tags also
         if (User::isAdmin()) {
-            $post->delete();
+            $this->postService->deletePostWithTags($post);
         }
-
         return redirect('/');
     }
+
 
     public function getPostsData(Request $request)
     {
@@ -165,7 +165,7 @@ class PostsController extends Controller
 
         if ($request->has('noOfComments') && $request->input('noOfComments') != '') {
             $noOfComments = $request->input('noOfComments');
-            $query->having('comments_count', '>=', (int) $noOfComments);
+            $query->where('comments_count', '=', (int) $noOfComments);
         }
 
         if ($request->has('searchQuery') && $request->input('searchQuery') != '') {
@@ -191,8 +191,6 @@ class PostsController extends Controller
         $posts = $query->offset($start)
             ->limit($limit)
             ->get();
-
-
 
         $data = array();
         if (!empty($posts)) {
@@ -221,7 +219,5 @@ class PostsController extends Controller
 
         return response()->json($json_data);
     }
-
-
 
 }

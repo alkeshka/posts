@@ -6,7 +6,6 @@ use App\Http\Requests\StoreCommentRequest;
 use App\Models\Comments;
 use App\Repositories\CommentsRepository;
 use App\Services\CommentService;
-use Illuminate\Support\Facades\Auth;
 
 class CommentsController extends Controller
 {

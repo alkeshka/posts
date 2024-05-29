@@ -34,99 +34,65 @@ function loadComments() {
 
 }
 
-$(document).ready(function() {
+$(document).ready(function () {
 
-    $('#closeModalButton').on('click', function() {
-        $('#modal').addClass('hidden');
-    });
+    var startDate;
+    var endDate;
 
-    $(window).on('click', function(event) {
-        var modal = $('#modal');
-        if ($(event.target).is(modal)) {
-            modal.addClass('hidden');
-        }
-    });
-
-    $('#author, #category, #noOfComments, #publishedDate, #searchQuery').on('change', function() {
-
-        const tableBody = $("#tableBody");
-
-        var author = $('#author').val();
-        var category = $('#category').val();
-        var noOfComments = $('#noOfComments').val();
-        var publishedDate = $('#publishedDate').val();
-        var searchQuery = $('#searchQuery').val();
-
-        const isLoggedIn = $('#isLoggedIn').val();
-        const userId = $('#userId').val();
-        const userRoleId = $('#userRoleId').val();
-
-        $.ajax({
-            url: "/filter" ,
-            type: "POST",
-            dataType: "json",
-            data: {
-                "_token": $('#token').val(),
-                'author': author,
-                'category': category,
-                'noOfComments': noOfComments,
-                'publishedDate': publishedDate,
-                'searchQuery': searchQuery
-            },
-            success: function(data) {
-                tableBody.html("");
-
-                $.each(data, function(index, post) {
-
-                    const tagNames = post.tags.map(tag => tag.name);
-                    const tagNamesString = tagNames.join(", ");
-
-                    const commentHTML = `
-                    <tr class="bg-white border-b bg-gray-800 border-gray-700 ">
-                        <td class="px-6 py-4">
-                            ${ index + 1 }
-                        </td>
-                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap ">
-                            ${ post.title }
-                        </th>
-                        <td class="px-6 py-4">
-                            ${ post.user.first_name + " " + post.user.last_name }
-                        </td>
-                        <td class="px-6 py-4">
-                           <button onclick="loadComments(${ post.id })">
-                                ${ post.comments_count }
-                            </button>
-                        </td>
-                        <td class="px-6 py-4">
-                            ${ tagNamesString }
-                        </td>
-                        <td class="px-6 py-4">
-                            ${ post.created_at }
-                        </td>
-                        <td class="px-6 py-4 space-x-2">
-                            <a href="/posts/${ post.id }" class="font-medium text-blue-600 text-blue-500 hover:underline">
-                                <i class="fa fa-eye" style="font-size:18px"></i></a>
-                                ${ isLoggedIn ?
-                            ` ${ userId == post.user_id || userRoleId == 1 ? `
-                                    <a href="/posts/${ post.id }/edit" class="font-medium text-blue-600 text-blue-500 hover:underline">
-                                        <i class="fa fa-edit" style="font-size:18px"></i>
-                                    </a>` : ''}
-
-                                        ${ userRoleId == 1  ? `
-                                    <a onclick="return confirm('Are you sure?')" href="/posts/${ post.id }/delete" class="font-medium text-blue-600 text-blue-500 hover:underline">
-                                        <i class="fa fa-trash-o text-red-500" style="font-size:18px"></i>
-                                    </a>` : '' }
-
-                                    ` : '' }
-                        </td>
-                    </tr>`;
-                    tableBody.append(commentHTML);
-                });
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                alert("There was an error fetching data!");
+    // Initialize DataTable
+    var table = $('#postsTable').DataTable({
+        processing: true,
+        serverSide: true,
+        searching: false,
+        ajax: {
+            url: $('#postsTable').data('url'),
+            data: function (d) {
+                d.noOfComments = $('#noOfComments').val();
+                d.searchQuery = $('#searchQuery').val();
+                d.category = $('#category').val();
+                d.author = $('#author').val();
+                d.publishedDateRangeStart = startDate ? startDate.format('YYYY-MM-DD') : null;
+                d.publishedDateRangeEnd = endDate ? endDate.format('YYYY-MM-DD') : null;
             }
-        });
+        },
+        columns: [
+            { data: 'id', name: 'id', searchable: false },
+            { data: 'title', name: 'title', searchable: false, orderable: true },
+            { data: 'author', name: 'author', orderable: true, searchable: false, class: 'capitalize' },
+            { data: 'comments_count', name: 'comments_count', orderable: true, searchable: false },
+            { data: 'tags', name: 'tags', orderable: false, searchable: false },
+            { data: 'created_at', name: 'created_at', orderable: true },
+            { data: 'actions', name: 'actions', orderable: false, searchable: false }
+        ],
+        order: [[0, 'desc']],
+        dom: '<"top"b>rt<"bottom"lp><"clear">'
+    });
 
+    // Event listener to redraw DataTable on input change
+    $('#noOfComments, #searchQuery, #category, #author').on('keyup change', function () {
+        table.draw();
+    });
+
+    // Initialize Date Range Picker
+    $('input[name="publishedDateRange"]').daterangepicker({
+        opens: 'left',
+        autoUpdateInput: false // To prevent the default update
+    }, function (start, end, label) {
+        startDate = start;
+        endDate = end;
+        table.draw();
+    });
+
+    // Update the input fields with the selected date range
+    $('input[name="publishedDateRange"]').on('apply.daterangepicker', function (ev, picker) {
+        $(this).val(picker.startDate.format('DD/MM/YYYY') + ' - ' + picker.endDate.format('DD/MM/YYYY'));
+    });
+
+    // Clear the input fields when canceling the date picker
+    $('input[name="publishedDateRange"]').on('cancel.daterangepicker', function (ev, picker) {
+        $(this).val('');
+        startDate = null;
+        endDate = null;
+        table.draw();
     });
 });
