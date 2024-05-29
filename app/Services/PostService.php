@@ -13,11 +13,14 @@ use Illuminate\Support\Facades\Storage;
 class PostService
 {
     protected $postRepository;
+    protected $filterService;
 
     public function __construct(
         PostRepository $postRepository,
+        FilterService $filterService
     ) {
         $this->postRepository = $postRepository;
+        $this->filterService = $filterService;
     }
 
     public function tagsSync($validatedTags, $post)
@@ -92,45 +95,6 @@ class PostService
 
         return $postLists;
 
-    }
-
-    public function applyFilters($request, $postLists)
-    {
-        if ($request->has('publishedDateRangeStart') && $request->has('publishedDateRangeEnd')) {
-            $publishedDateRangeStart = $request->input('publishedDateRangeStart');
-            $publishedDateRangeEnd = $request->input('publishedDateRangeEnd');
-
-            if (!is_null($publishedDateRangeStart) && !is_null($publishedDateRangeEnd)) {
-                $startDate = Carbon::parse($publishedDateRangeStart);
-                $endDate = Carbon::parse($publishedDateRangeEnd);
-                $postLists->whereBetween('created_at', [$startDate, $endDate]);
-            }
-        }
-
-        if ($request->has('noOfComments') && $request->input('noOfComments') != '') {
-            $noOfComments = $request->input('noOfComments');
-            $postLists->where('comments_count', '=', (int) $noOfComments);
-        }
-
-        if ($request->has('searchQuery') && $request->input('searchQuery') != '') {
-            $search = $request->input('searchQuery');
-            $postLists->where(function ($q) use ($search) {
-                $q->where('title', 'LIKE', "%{$search}%");
-            });
-        }
-
-        if ($request->has('author') && $request->input('author') != '') {
-            $postLists->where('user_id', $request->author);
-        }
-
-        if ($request->has('category') && $request->input('category') != '') {
-            $tagId = $request->category;
-            $postLists->whereHas('tags', function ($q) use ($tagId) {
-                $q->where('tags.id', $tagId);
-            });
-        }
-
-        return $postLists;
     }
 
     public function getPaginate($request, $postLists)

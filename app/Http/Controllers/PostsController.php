@@ -7,6 +7,7 @@ use App\Http\Requests\UpdatePostRequest;
 use App\Models\Posts;
 use App\Models\User;
 use App\Repositories\PostRepository;
+use App\Services\FilterService;
 use App\Services\PostService;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
@@ -23,13 +24,16 @@ class PostsController extends Controller
      */
     protected $postService;
     protected $postRepository;
+    protected $filterService;
 
     public function __construct(
         PostService $postService,
-        PostRepository $postRepository
+        PostRepository $postRepository,
+        FilterService $filterService
    ) {
         $this->postService = $postService;
         $this->postRepository = $postRepository;
+        $this->filterService = $filterService;
     }
 
     /**
@@ -138,7 +142,7 @@ class PostsController extends Controller
         $postLists = $this->postRepository->getPostsBasedOnUser();
         $totalPostsCount = $postLists->count();
         $postLists = $this->postService->applySorting($request, $postLists);
-        $postLists = $this->postService->applyFilters($request, $postLists);
+        $postLists = $this->filterService->applyFilters($postLists, $request);
         $paginatedPosts = $this->postService->getPaginate($request, $postLists);
         $formattedData = $this->postService->getFormatData($paginatedPosts);
         $filteredPostsCount = $postLists->count();
