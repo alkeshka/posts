@@ -82,12 +82,12 @@ class Posts extends Model
 
     public function scopePublishedWithDetails()
     {
-        return $this->latest()->where('status', 1)->with(['tags', 'user'])->withCount('comments');
+        return $this->where('status', 1)->with(['tags', 'user'])->withCount('comments');
     }
 
     public function scopeAllWithDetails()
     {
-        return $this->latest()->with(['tags', 'user'])->withCount('comments');
+        return $this->with(['tags', 'user'])->withCount('comments');
     }
 
 }

@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\CommentsController;
-use App\Http\Controllers\FilterController;
 use App\Http\Controllers\PostsController;
 use App\Http\Controllers\RegisteredUserController;
 use App\Http\Controllers\SessionController;
@@ -39,5 +38,4 @@ Route::get('/posts/data', [PostsController::class, 'getPostsData'])->name('posts
 Route::get('/posts/{post}', [PostsController::class, 'show'])->name('view');
 Route::get('/comments/{post:id}', [CommentsController::class, 'index']);
 
-Route::post('/filter', FilterController::class);
 Route::get('/tags/{tags}', TagsController::class)->name('tags');

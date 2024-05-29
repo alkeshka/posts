@@ -65,7 +65,7 @@ $(document).ready(function () {
             { data: 'actions', name: 'actions', orderable: false, searchable: false }
         ],
         order: [[0, 'desc']],
-        dom: '<"top"b>rt<"bottom"lp><"clear">'
+        dom: '<"top"b>rt<"bottom"lip><"clear">'
     });
 
     // Event listener to redraw DataTable on input change
