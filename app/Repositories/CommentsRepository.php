@@ -12,10 +12,13 @@ interface CommentsRepositoryInterface
 
 class CommentsRepository implements CommentsRepositoryInterface
 {
-
     protected $commentModel;
 
-
+    /**
+     * Constructs a new instance of the class.
+     *
+     * @param Comments $comment The Comments model instance.
+     */
     public function __construct(
         Comments $comment,
     ) {

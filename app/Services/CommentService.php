@@ -60,7 +60,7 @@ class CommentService
             'type' => 'success'
         ];
     }
-    
+
     /**
      * Retrieves the comments for a given post ID.
      *

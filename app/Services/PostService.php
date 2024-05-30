@@ -24,7 +24,7 @@ class PostService
         FilterService $filterService
     ) {
         $this->postRepository = $postRepository;
-        $this->filterService = $filterService;
+        $this->filterService  = $filterService;
     }
 
     /**
@@ -59,20 +59,6 @@ class PostService
         Storage::delete($post->thumbnail);
         $thumbnailPath = $thumbnail->store('thumbnail', 'public');
         return $thumbnailPath;
-    }
-
-    /**
-     * Attaches tags to a given post.
-     *
-     * @param mixed $post The post to attach tags to.
-     * @param string $tags The tags to attach, separated by commas.
-     * @return void
-     */
-    public function attachTags($post, $tags)
-    {
-        foreach (explode(',', $tags) as $tag) {
-            $post->tag($tag);
-        }
     }
 
     /**
@@ -168,16 +154,13 @@ class PostService
         $data = array();
         if (!empty($posts)) {
             foreach ($posts as $index => $post) {
-                $nestedData['id'] = $index + 1;
-                $nestedData['title'] = $post->title;
-                $nestedData['author'] = $post->user->first_name . ' ' . $post->user->last_name;
+                $nestedData['id']             = $index + 1;
+                $nestedData['title']          = $post->title;
+                $nestedData['author']         = $post->user->first_name . ' ' . $post->user->last_name;
                 $nestedData['comments_count'] = '<button onclick="loadComments(' . $post->id . ')">' . $post->comments_count . '</button>';
-                $nestedData['tags'] = $post->tags->pluck('name')->implode(', ');
-                $nestedData['created_at'] = $post->created_at;
-                $nestedData['actions'] = '
-                <a href="/posts/' . $post->id . '" class="font-medium text-blue-600 text-blue-500 hover:underline"><i class="fa fa-eye" style="font-size:18px"></i></a>
-                ' . (auth()->check() && (auth()->id() == $post->user_id || User::isAdmin()) ? '<a href="/posts/' . $post->id . '/edit" class="font-medium text-blue-600 text-blue-500 hover:underline"><i class="fa fa-edit" style="font-size:18px"></i></a>' : '') . '
-                ' . (auth()->check() && User::isAdmin() ? '<a onclick="return confirm(\'Are you sure?\')" href="/posts/' . $post->id . '/delete" class="font-medium text-blue-600 text-blue-500 hover:underline"><i class="fa fa-trash-o text-red-500" style="font-size:18px"></i></a>' : '');
+                $nestedData['tags']           = $post->tags->pluck('name')->implode(', ');
+                $nestedData['created_at']     = $post->created_at;
+                $nestedData['actions']        = $this->getActionButtons($post);
 
                 $data[] = $nestedData;
             }
@@ -185,6 +168,32 @@ class PostService
 
         return $data;
     }
+
+    /**
+     * Generates the action buttons for a given post.
+     *
+     * @param Post $post The post object.
+     * @return string The HTML string containing the action buttons.
+     */
+    protected function getActionButtons($post)
+    {
+        $actions = '<div class="flex justify-center items-center">';
+
+        $actions .= '<a href="/posts/' . $post->id . '" class="font-medium text-blue-600 text-blue-500 hover:underline"><i class="fa fa-eye" style="font-size:18px"></i></a>';
+
+        if (auth()->check() && (auth()->id() == $post->user_id || User::isAdmin())) {
+            $actions .= '<a href="/posts/' . $post->id . '/edit" class="ml-2 font-medium text-blue-600 text-blue-500 hover:underline"><i class="fa fa-edit" style="font-size:18px"></i></a>';
+        }
+
+        if (auth()->check() && User::isAdmin()) {
+            $actions .= '<a onclick="return confirm(\'Are you sure?\')" href="/posts/' . $post->id . '/delete" class="ml-2 font-medium text-blue-600 text-blue-500 hover:underline"><i class="fa fa-trash-o text-red-500" style="font-size:18px"></i></a>';
+        }
+
+        $actions .= '</div>';
+
+        return $actions;
+    }
+
 
     /**
      * Creates a JSON response with the given data.

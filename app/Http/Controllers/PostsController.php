@@ -75,7 +75,7 @@ class PostsController extends Controller
         $post = Posts::create(Arr::except($validatedAttributes, 'categories'));
 
         if ($validatedAttributes['categories'] ?? false) {
-            $this->postService->attachTags($post, $validatedAttributes['categories']);
+            $this->postService->tagsSync($validatedAttributes['categories'], $post);
         }
 
         $status = [
