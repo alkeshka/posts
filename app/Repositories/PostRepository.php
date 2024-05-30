@@ -14,7 +14,7 @@ interface PostRepositoryInterface
 class PostRepository implements PostRepositoryInterface
 {
     // inject Post model in the custructor
-    
+
     /**
      * Retrieves the posts owned and published by the authenticated user, or all published posts if the user is an admin.
      *
@@ -39,8 +39,7 @@ class PostRepository implements PostRepositoryInterface
 
     public function createPost($validatedAttributes)
     {
-        //// get collotion
-        Posts::create($validatedAttributes);
+        return Posts::create($validatedAttributes);
     }
 
     public function getPosts($id)

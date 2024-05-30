@@ -6,6 +6,8 @@ use App\Models\Posts;
 use App\Models\Tags;
 use App\Models\User;
 use App\Repositories\PostRepository;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 
@@ -216,5 +218,50 @@ class PostService
             "recordsFiltered" => intval($filteredPostsCount),
             "data"            => $formattedData
         ];
+    }
+
+    /**
+     * Creates a new post with the given validated attributes.
+     *
+     * @param array $validatedAttributes The validated attributes of the post.
+     * It should contain the 'thumbnail' and 'categories' keys.
+     * @return Post The newly created post.
+     */
+    public function createPost(array $validatedAttributes)
+    {
+        $thumbnailPath = $this->uploadThumbnail($validatedAttributes['thumbnail']);
+        $validatedAttributes['thumbnail'] = $thumbnailPath;
+        $validatedAttributes['user_id'] = Auth::id();
+
+        $post = $this->postRepository->createPost(Arr::except($validatedAttributes, 'categories'));
+
+        $this->syncCategories($validatedAttributes['categories'], $post);
+
+        return $post;
+    }
+
+    /**
+     * Uploads the given thumbnail and stores it in the 'thumbnail' directory of the public storage.
+     *
+     * @param mixed $thumbnail The thumbnail to be uploaded.
+     * @return string The path of the uploaded thumbnail.
+     */
+    protected function uploadThumbnail($thumbnail)
+    {
+        return $thumbnail->store('thumbnail', 'public');
+    }
+
+    /**
+     * Synchronizes the given categories with the given post.
+     *
+     * @param mixed $categories The categories to be synchronized.
+     * @param mixed $post The post to be synchronized with the categories.
+     * @return void
+     */
+    protected function syncCategories($categories, $post)
+    {
+        if (!empty($categories)) {
+            $this->tagsSync($categories, $post);
+        }
     }
 }

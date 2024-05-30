@@ -64,24 +64,13 @@ class PostsController extends Controller
      */
     public function store(StorePostRequest $request)
     {
-        //get data for post creation
         $validatedAttributes = $request->validated();
-
-        $thumbnailPath = $request->thumbnail->store('thumbnail', 'public');
-
-        $validatedAttributes['thumbnail'] = $thumbnailPath;
-        $validatedAttributes['user_id']   = Auth::id();
-
-        $post = Posts::create(Arr::except($validatedAttributes, 'categories'));
-
-        if ($validatedAttributes['categories'] ?? false) {
-            $this->postService->tagsSync($validatedAttributes['categories'], $post);
-        }
+        $this->postService->createPost($validatedAttributes);
 
         $status = [
-                'message' => 'Post created successfully!',
-                'type' => 'success'
-            ];
+            'message' => 'Post created successfully!',
+            'type' => 'success'
+        ];
 
         return redirect('/')->with('status', $status);
     }
