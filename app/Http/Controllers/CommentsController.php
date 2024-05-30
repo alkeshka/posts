@@ -4,25 +4,20 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreCommentRequest;
 use App\Models\Comments;
-use App\Repositories\CommentsRepository;
 use App\Services\CommentService;
 
 class CommentsController extends Controller
 {
-    protected $commentsRepository;
     protected $commentService;
 
     /**
      * Constructs a new instance of the class.
      *
-     * @param CommentsRepository $commentsRepository The repository for managing comments.
      * @param CommentService $commentService The service for managing comments.
      */
     public function __construct(
-        CommentsRepository $commentsRepository,
         CommentService $commentService
     ) {
-        $this->commentsRepository = $commentsRepository;
         $this->commentService = $commentService;
     }
 
@@ -34,7 +29,7 @@ class CommentsController extends Controller
      */
     public function index(String $postId)
     {
-        return $this->commentsRepository->getCommentsForAPost($postId);
+        return $this->commentService->getCommentsForPost($postId);
     }
 
     /**

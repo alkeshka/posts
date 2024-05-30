@@ -3,11 +3,24 @@
 namespace App\Services;
 
 use App\Models\Comments;
+use App\Repositories\CommentsRepository;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
 class CommentService
 {
+    protected $commentsRepository;
+    /**
+     * Constructs a new instance of the class.
+     *
+     * @param CommentsRepository $commentsRepository The repository for managing comments.
+     */
+    public function __construct(
+        CommentsRepository $commentsRepository,
+    ) {
+        $this->commentsRepository = $commentsRepository;
+    }
+
     /**
      * Deletes a comment if the user is the owner of the comment or an admin.
      *
@@ -40,11 +53,22 @@ class CommentService
     public function createComment(array $validatedAttributes)
     {
         $validatedAttributes['user_id'] = Auth::id();
-        Comments::create($validatedAttributes);
+        $this->commentsRepository->create($validatedAttributes);
 
         return [
             'message' => 'Your comment has been posted. Thank you!',
             'type' => 'success'
         ];
+    }
+    
+    /**
+     * Retrieves the comments for a given post ID.
+     *
+     * @param int $postId The ID of the post.
+     * @return Collection The collection of comments for the post.
+     */
+    public function getCommentsForPost($postId)
+    {
+        return $this->commentsRepository->fetchCommentsForPost($postId);
     }
 }
