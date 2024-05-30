@@ -9,7 +9,6 @@ use App\Models\User;
 use App\Repositories\PostRepository;
 use App\Services\FilterService;
 use App\Services\PostService;
-use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Arr;
@@ -139,14 +138,14 @@ class PostsController extends Controller
      */
     public function getPostsData(Request $request)
     {
-        $postLists = $this->postRepository->getPostsBasedOnUser();
-        $totalPostsCount = $postLists->count();
-        $postLists = $this->postService->applySorting($request, $postLists);
-        $postLists = $this->filterService->applyFilters($postLists, $request);
-        $paginatedPosts = $this->postService->getPaginate($request, $postLists);
-        $formattedData = $this->postService->getFormatData($paginatedPosts);
+        $postLists          = $this->postRepository->getPostsBasedOnUser();
+        $totalPostsCount    = $postLists->count();
+        $postLists          = $this->postService->applySorting($request, $postLists);
+        $postLists          = $this->filterService->applyFilters($postLists, $request);
+        $paginatedPosts     = $this->postService->getPaginate($request, $postLists);
+        $formattedData      = $this->postService->getFormatData($paginatedPosts);
         $filteredPostsCount = $postLists->count();
-        $jsonData = $this->postService->createJsonResponse($request, $totalPostsCount, $filteredPostsCount, $formattedData);
+        $jsonData           = $this->postService->createJsonResponse($request, $totalPostsCount, $filteredPostsCount, $formattedData);
 
         return response()->json($jsonData);
     }

@@ -49,7 +49,7 @@
                 </div>
                 <p class="text-sm leading-relaxed ">{{ $comment->body }}</p>
                 @auth
-                    @if ($comment->user->id === Auth::user()->id || Auth::user()->users_role_type == \App\Models\User::ROLE_ADMIN)
+                    @if (Gate::allows('delete-comment', $comment)) 
                         <div class="flex justify-end">
                             <form method="post" action="/comments/{{ $comment->id }}/delete">
                                 @csrf

@@ -3,8 +3,8 @@
 namespace App\Services;
 
 use App\Models\Comments;
-use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class CommentService
 {
@@ -16,7 +16,8 @@ class CommentService
      */
     public function deleteComment(Comments $comment)
     {
-        if ($comment->user_id === Auth::id() || User::IsAdmin()) {
+
+        if (Gate::allows('delete-comment', $comment)) {
             $comment->delete();
             return [
                 'message' => 'Comment deleted successfully',

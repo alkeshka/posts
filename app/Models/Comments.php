@@ -32,11 +32,21 @@ class Comments extends Model
         'posts_id' => 'integer',
     ];
 
+    /**
+     * Retrieve the user that belongs to this comment.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo The user relationship.
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * Retrieve the post that belongs to this comment.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo The post relationship.
+     */
     public function post(): BelongsTo
     {
         return $this->belongsTo(Posts::class);

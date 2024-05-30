@@ -4,7 +4,6 @@ namespace App\Repositories;
 
 use App\Models\Posts;
 use App\Models\User;
-use App\Services\DateService;
 use Illuminate\Support\Facades\Auth;
 
 interface PostRepositoryInterface
@@ -14,13 +13,6 @@ interface PostRepositoryInterface
 
 class PostRepository implements PostRepositoryInterface
 {
-    protected $dateService;
-
-    public function __construct(DateService $dateService)
-    {
-        $this->dateService = $dateService;
-    }
-
     /**
      * Retrieves the posts owned and published by the authenticated user, or all published posts if the user is an admin.
      *

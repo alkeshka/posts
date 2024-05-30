@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use App\Models\Comments;
+use App\Models\User;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,6 +22,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // $this->registerPolicies();
+        Gate::define('delete-comment', function (User $user, Comments $comment) {
+            return $comment->user_id === $user->id || $user->isAdmin();
+        });
     }
 }
