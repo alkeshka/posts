@@ -6,7 +6,6 @@ use Carbon\Carbon;
 
 class FilterService
 {
-
     /**
      * Applies various filters to the given post query based on the request parameters.
      *
@@ -50,7 +49,7 @@ class FilterService
 
     public function applyTagFilter($postQuery, $category)
     {
-        if ($category !== null && $category !== '') { 
+        if ($category !== null && $category !== '') {
             $postQuery->whereHas('tags', function ($q) use ($category) {
                 $q->where('tags.id', $category);
             });

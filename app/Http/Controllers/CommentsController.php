@@ -9,10 +9,9 @@ use App\Services\CommentService;
 
 class CommentsController extends Controller
 {
-
     protected $commentsRepository;
     protected $commentService;
-    
+
     /**
      * Constructs a new instance of the class.
      *

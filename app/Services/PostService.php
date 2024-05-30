@@ -13,7 +13,6 @@ class PostService
 {
     protected $postRepository;
     protected $filterService;
-    
     /**
      * Constructs a new instance of the class.
      *
@@ -108,7 +107,7 @@ class PostService
      * @param Posts $post The post to be deleted.
      * @return void
      */
-    public function deletePostWithTags(Posts $post): void
+    public function deletePost(Posts $post): void
     {
         $post->tags()->detach();
         $post->delete();

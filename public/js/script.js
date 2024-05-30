@@ -11,20 +11,28 @@ function loadComments() {
     type: "GET",
     dataType: "json",
     success: function(data) {
+        if (data.length === 0) {
+            const noCommentsHTML = `
+                    <div class="mt-1">
+                        <span class="block text-sm font-medium text-gray-700">
+                            No comments for the selected post!
+                        </span>
+                    </div>`;
+            modalContent.append(noCommentsHTML);
+        } else {
+            $.each(data, function(index, comment) {
+                const commentHTML = `
+                    <div class="mt-1">
+                        <span class="block text-sm font-medium text-gray-700">
+                            ${comment.user.first_name + " " + comment.user.last_name}
+                        </span>
+                        <p class="text-sm">${comment.body}</p>
+                        <div class="border-b block border-gray-900/10 py-1"></div>
+                    </div>`;
 
-        $.each(data, function(index, comment) {
-            const commentHTML = `
-                <div class="mt-1">
-                    <span class="block text-sm font-medium text-gray-700">
-                        ${comment.user.first_name + " " + comment.user.last_name}
-                    </span>
-                    <p class="text-sm">${comment.body}</p>
-                    <div class="border-b block border-gray-900/10 py-1"></div>
-                </div>`;
-
-            $("#modalContent").append(commentHTML);
-        });
-
+                $("#modalContent").append(commentHTML);
+            });
+        }
         $('#modal').removeClass('hidden');
     },
     error: function(jqXHR, textStatus, errorThrown) {
@@ -79,7 +87,10 @@ $(document).ready(function () {
             { data: 'actions', name: 'actions', orderable: false, searchable: false }
         ],
         order: [[0, 'desc']],
-        dom: '<"top"b>rt<"bottom"lp><"clear">'
+        dom: '<"top"b>rt<"bottom"lp><"clear">',
+        language: {
+            emptyTable: "No posts available for the selected criteria" // Custom message
+        }
     });
 
     // Event listener to redraw DataTable on input change

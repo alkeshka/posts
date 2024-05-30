@@ -16,7 +16,6 @@ use Illuminate\Http\Request;
 
 class PostsController extends Controller
 {
-
     protected $postService;
     protected $postRepository;
     protected $filterService;
@@ -65,6 +64,7 @@ class PostsController extends Controller
      */
     public function store(StorePostRequest $request)
     {
+        //get data for post creation
         $validatedAttributes = $request->validated();
 
         $thumbnailPath = $request->thumbnail->store('thumbnail', 'public');
@@ -128,7 +128,7 @@ class PostsController extends Controller
     public function destroy(Posts $post): RedirectResponse
     {
         if (User::isAdmin()) {
-            $this->postService->deletePostWithTags($post);
+            $this->postService->deletePost($post);
         }
         return redirect('/');
     }
