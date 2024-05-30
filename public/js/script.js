@@ -36,6 +36,20 @@ function loadComments() {
 
 $(document).ready(function () {
 
+    function closeModal() {
+        $('#modal').addClass('hidden');
+    }
+
+    $('#closeModalButton').on('click', function () {
+        closeModal();
+    });
+
+    $('#modal').on('click', function (event) {
+        if ($(event.target).is('#modal')) {
+            closeModal();
+        }
+    });
+
     var startDate;
     var endDate;
 
