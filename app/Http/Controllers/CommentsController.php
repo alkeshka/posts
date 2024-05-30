@@ -12,7 +12,13 @@ class CommentsController extends Controller
 
     protected $commentsRepository;
     protected $commentService;
-
+    
+    /**
+     * Constructs a new instance of the class.
+     *
+     * @param CommentsRepository $commentsRepository The repository for managing comments.
+     * @param CommentService $commentService The service for managing comments.
+     */
     public function __construct(
         CommentsRepository $commentsRepository,
         CommentService $commentService

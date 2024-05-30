@@ -22,7 +22,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // $this->registerPolicies();
+        // Checks weather the authenticated user has the permission to delete a comment
         Gate::define('delete-comment', function (User $user, Comments $comment) {
             return $comment->user_id === $user->id || $user->isAdmin();
         });

@@ -16,15 +16,18 @@ use Illuminate\Http\Request;
 
 class PostsController extends Controller
 {
-    /**
-     * Constructs a new instance of the class.
-     *
-     * @param PostService $postService The PostService instance to be used.
-     */
+
     protected $postService;
     protected $postRepository;
     protected $filterService;
 
+    /**
+     * Constructs a new instance of the class.
+     *
+     * @param PostService $postService The service for handling posts.
+     * @param PostRepository $postRepository The repository for handling posts.
+     * @param FilterService $filterService The service for filtering posts.
+     */
     public function __construct(
         PostService $postService,
         PostRepository $postRepository,

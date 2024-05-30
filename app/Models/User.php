@@ -53,16 +53,31 @@ class User extends Authenticatable
         ];
     }
 
+    /**
+     * Retrieve the posts associated with this user.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function posts(): HasMany
     {
         return $this->hasMany(Posts::class);
     }
 
+    /**
+     * Retrieve the comments associated with this user.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function comments(): HasMany
     {
         return $this->hasMany(Comments::class);
     }
 
+    /**
+     * Scope a query to only include users who have published posts.
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
     public function scopePostAuthors()
     {
         return $this->whereHas('posts');

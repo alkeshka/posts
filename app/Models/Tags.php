@@ -26,7 +26,12 @@ class Tags extends Model
     protected $casts = [
         'id' => 'integer',
     ];
-
+    
+    /**
+     * Retrieve the posts associated with this tag.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany The posts relationship.
+     */
     public function posts()
     {
         return $this->belongsToMany(Posts::class);

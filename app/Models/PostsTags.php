@@ -32,11 +32,21 @@ class PostsTags extends Model
         'tag_id' => 'integer',
     ];
 
+    /**
+     * Retrieve the associated post model.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo The post relationship.
+     */
     public function post(): BelongsTo
     {
         return $this->belongsTo(\App\Models\Posts::class);
     }
 
+    /**
+     * Retrieve the associated tag model.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo The tag relationship.
+     */
     public function tag(): BelongsTo
     {
         return $this->belongsTo(\App\Models\Tags::class);

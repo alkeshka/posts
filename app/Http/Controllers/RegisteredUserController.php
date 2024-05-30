@@ -22,11 +22,8 @@ class RegisteredUserController extends Controller
      */
     public function store(StoreUserRequest $request)
     {
-
         $user = User::create($request->validated() + ['users_role_type_id' => UsersRole::getNormalUserRoleTypeId()]);
-
         Auth::login($user);
-
         return redirect('/');
     }
 
