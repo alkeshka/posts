@@ -6,7 +6,6 @@ use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
 use App\Models\Posts;
 use App\Models\User;
-use App\Repositories\PostRepository;
 use App\Services\FilterService;
 use App\Services\PostService;
 use Illuminate\Http\RedirectResponse;
@@ -15,7 +14,6 @@ use Illuminate\Http\Request;
 class PostsController extends Controller
 {
     protected $postService;
-    protected $postRepository;
     protected $filterService;
 
     /**
@@ -27,11 +25,9 @@ class PostsController extends Controller
      */
     public function __construct(
         PostService $postService,
-        PostRepository $postRepository,
         FilterService $filterService
    ) {
         $this->postService = $postService;
-        $this->postRepository = $postRepository;
         $this->filterService = $filterService;
     }
 
@@ -122,14 +118,7 @@ class PostsController extends Controller
      */
     public function getPostsData(Request $request)
     {
-        $postLists          = $this->postRepository->getPostsBasedOnUser();
-        $totalPostsCount    = $postLists->count();
-        $postLists          = $this->postService->applySorting($request, $postLists);
-        $postLists          = $this->filterService->applyFilters($postLists, $request);
-        $paginatedPosts     = $this->postService->getPaginate($request, $postLists);
-        $formattedData      = $this->postService->getFormatData($paginatedPosts);
-        $filteredPostsCount = $postLists->count();
-        $jsonData           = $this->postService->createJsonResponse($request, $totalPostsCount, $filteredPostsCount, $formattedData);
+        $jsonData = $this->postService->getPostsData($request);
 
         return response()->json($jsonData);
     }

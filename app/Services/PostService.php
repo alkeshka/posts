@@ -7,16 +7,17 @@ use App\Models\Posts;
 use App\Models\Tags;
 use App\Models\User;
 use App\Repositories\PostRepository;
+use App\Repositories\TagRepository;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
-
 
 class PostService
 {
     protected $postRepository;
     protected $filterService;
     protected $authHelper;
+    protected $tagRepository;
 
     /**
      * Constructs a new instance of the class.
@@ -27,11 +28,13 @@ class PostService
     public function __construct(
         PostRepository $postRepository,
         FilterService $filterService,
-        AuthHelper $authHelper
+        AuthHelper $authHelper,
+        TagRepository $tagRepository
     ) {
         $this->postRepository = $postRepository;
         $this->filterService  = $filterService;
         $this->authHelper = $authHelper;
+        $this->tagRepository = $tagRepository;
     }
 
     /**
@@ -41,16 +44,10 @@ class PostService
      * @param Post $post The post to synchronize the tags with.
      * @return void
      */
-    public function tagsSync($validatedTags, $post)
+    public function syncTagsWithPost($validatedTags, $post)
     {
         $tagNames = explode(',', $validatedTags);
-        $tagIds = [];
-
-        foreach ($tagNames as $name) {
-            $tag = Tags::firstOrCreate(['name' => trim($name)]);
-            $tagIds[] = $tag->id;
-        }
-
+        $tagIds = $this->tagRepository->getOrCreateTags($tagNames);
         $post->tags()->sync($tagIds);
     }
 
@@ -93,47 +90,22 @@ class PostService
     }
 
     /**
-     * Applies sorting to the given post list based on the request parameters.
+     * Retrieves the posts data based on the given request.
      *
-     * @param Request $request The HTTP request object containing the sorting parameters.
-     * @param Builder $postLists The query builder for the post list.
-     * @return Builder The modified query builder with the applied sorting.
+     * @param Request $request The HTTP request object containing the sorting and filtering parameters.
+     * @return JsonResponse The JSON response containing the paginated and formatted posts data.
      */
-    public function applySorting($request, $postLists)
+    public function getPostsData($request)
     {
-        $columns = ['id', 'title', 'user.first_name', 'comments_count', 'tags', 'created_at', 'actions'];
-        $orderColumnIndex = $request->input('order.0.column', 0);
-        $order = $columns[$orderColumnIndex];
-        $dir = $request->input('order.0.dir', 'desc');
+        $postLists          = $this->postRepository->fetchPostsBasedOnUser();
+        $totalPostsCount    = $postLists->count();
+        $sortedPosts        = $this->postRepository->applySorting($postLists, $request);
+        $filteredPosts      = $this->filterService->applyFilters($sortedPosts, $request);
+        $paginatedPosts     = $this->postRepository->paginatePosts($request, $filteredPosts);
+        $formattedData      = $this->formatData($paginatedPosts);
+        $filteredPostsCount = $filteredPosts->count();
 
-        if ($order === 'user.first_name') {
-            $postLists->join('users', 'posts.user_id', '=', 'users.id')
-            ->orderBy('users.first_name', $dir)
-            ->orderBy('users.last_name', $dir);
-        } else {
-            $postLists->orderBy($order, $dir);
-        }
-
-        return $postLists;
-
-    }
-
-    /**
-     * Retrieves a paginated list of posts based on the given request and query builder.
-     *
-     * @param Request $request The HTTP request object containing the pagination parameters.
-     * @param Builder $postLists The query builder for the post list.
-     * @return Collection The paginated list of posts.
-     */
-    public function getPaginate($request, $postLists)
-    {
-        $limit = $request->input('length');
-        $start = $request->input('start');
-        $posts = $postLists->offset($start)
-            ->limit($limit)
-            ->get();
-
-        return $posts;
+        return $this->createJsonResponse($request, $totalPostsCount, $filteredPostsCount, $formattedData);
     }
 
     /**
@@ -142,7 +114,7 @@ class PostService
      * @param Collection $posts The collection of posts to format.
      * @return array The formatted posts data.
      */
-    public function getFormatData($posts)
+    public function formatData($posts)
     {
         $data = array();
         if (!empty($posts)) {
@@ -248,10 +220,10 @@ class PostService
      * @param mixed $post The post to be synchronized with the categories.
      * @return void
      */
-    protected function syncCategories($categories, $post)
+    public function syncCategories($categories, $post)
     {
         if (!empty($categories)) {
-            $this->tagsSync($categories, $post);
+            $this->syncTagsWithPost($categories, $post);
         }
     }
 
@@ -287,4 +259,15 @@ class PostService
         }
         return $this->uploadThumbnail($thumbnail);
     }
+
+    /**
+     * Retrieves the posts based on the authenticated user.
+     *
+     * @return \Illuminate\Database\Eloquent\Collection The collection of posts.
+     */
+    public function getPostsBasedOnUser()
+    {
+        return $this->postRepository->fetchPostsBasedOnUser();
+    }
+
 }
