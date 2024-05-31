@@ -3,11 +3,23 @@
 namespace App\Http\Controllers;
 
 use App\Models\Tags;
+use App\Services\TagService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 
 class TagsController extends Controller
 {
+    protected $tagService;
+
+    /**
+     * Constructs a new instance of the class.
+     *
+     * @param TagService $tagService The service for managing tags.
+     */
+    public function __construct(TagService $tagService)
+    {
+        $this->tagService = $tagService;
+    }
 
     public function index(Request $request)
     {

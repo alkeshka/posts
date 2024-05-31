@@ -89,6 +89,8 @@ $(document).ready(function () {
 
     // Initialize DataTable
     var table = $('#postsTable').DataTable({
+        scrollY: false,
+        scrollX: false,
         processing: true,
         serverSide: true,
         searching: false,

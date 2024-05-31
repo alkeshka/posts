@@ -34,4 +34,15 @@ class TagRepository
         }
         return $tagIds;
     }
+
+    /**
+     * Fetch tags based on the search term.
+     *
+     * @param string $searchTerm
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getTagsBySearchTerm(string $searchTerm)
+    {
+        return $this->tagModel->where('name', 'like', '%' . $searchTerm . '%')->get();
+    }
 }

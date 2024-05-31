@@ -37,11 +37,9 @@ class PostsController extends Controller
     public function index()
     {
         $postAuthors = $this->postService->getPostAuthors();
-        $tags = $this->postService->getTags();
 
         return view('posts.index', [
             'postAuthors' => $postAuthors,
-            'tags' => $tags,
         ]);
     }
 

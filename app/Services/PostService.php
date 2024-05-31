@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Helpers\AuthHelper;
 use App\Models\Posts;
-use App\Models\Tags;
 use App\Models\User;
 use App\Repositories\PostRepository;
 use App\Repositories\TagRepository;
@@ -61,19 +60,6 @@ class PostService
         $cacheKey = 'postAuthors';
         return Cache::remember($cacheKey, 60, function () {
             return User::postAuthors()->get();
-        });
-    }
-
-    /**
-     * Retrieves the tags from the cache or database if not present.
-     *
-     * @return \Illuminate\Database\Eloquent\Collection The collection of tags.
-     */
-    public function getTags()
-    {
-        $cacheKey = 'tags';
-        return Cache::remember($cacheKey, 60, function () {
-            return Tags::all();
         });
     }
 
