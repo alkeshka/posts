@@ -2,14 +2,15 @@
 
 namespace App\Services;
 
+use App\Helpers\AuthHelper;
 use App\Models\Comments;
 use App\Repositories\CommentsRepository;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
 class CommentService
 {
     protected $commentsRepository;
+    protected $authHelper;
     /**
      * Constructs a new instance of the class.
      *
@@ -17,8 +18,10 @@ class CommentService
      */
     public function __construct(
         CommentsRepository $commentsRepository,
+        AuthHelper $authHelper
     ) {
         $this->commentsRepository = $commentsRepository;
+        $this->authHelper = $authHelper;
     }
 
     /**
@@ -52,7 +55,7 @@ class CommentService
      */
     public function createComment(array $validatedAttributes)
     {
-        $validatedAttributes['user_id'] = Auth::id();
+        $validatedAttributes['user_id'] = $this->authHelper->getAuthenticatedUserId();
         $this->commentsRepository->create($validatedAttributes);
 
         return [

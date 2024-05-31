@@ -37,10 +37,29 @@ class PostRepository implements PostRepositoryInterface
         });
     }
 
+    /**
+     * Creates a new post using the provided validated attributes.
+     *
+     * @param array $validatedAttributes The attributes to create the post with.
+     * @return \App\Models\Posts The newly created post.
+     */
     public function createPost($validatedAttributes)
     {
         return Posts::create($validatedAttributes);
     }
+    
+    /**
+     * Updates a post with the provided attributes.
+     *
+     * @param Posts $post The post to be updated.
+     * @param array $attributes The attributes to update the post with.
+     * @return bool Returns true if the post was successfully updated, false otherwise.
+     */
+    public function updatePost(Posts $post, array $attributes)
+    {
+        return $post->update($attributes);
+    }
+
 
     public function getPosts($id)
     {

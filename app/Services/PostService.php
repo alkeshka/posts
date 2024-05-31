@@ -2,19 +2,22 @@
 
 namespace App\Services;
 
+use App\Helpers\AuthHelper;
 use App\Models\Posts;
 use App\Models\Tags;
 use App\Models\User;
 use App\Repositories\PostRepository;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
+
 
 class PostService
 {
     protected $postRepository;
     protected $filterService;
+    protected $authHelper;
+
     /**
      * Constructs a new instance of the class.
      *
@@ -23,10 +26,12 @@ class PostService
      */
     public function __construct(
         PostRepository $postRepository,
-        FilterService $filterService
+        FilterService $filterService,
+        AuthHelper $authHelper
     ) {
         $this->postRepository = $postRepository;
         $this->filterService  = $filterService;
+        $this->authHelper = $authHelper;
     }
 
     /**
@@ -47,20 +52,6 @@ class PostService
         }
 
         $post->tags()->sync($tagIds);
-    }
-
-    /**
-     * Replaces the thumbnail of a post with a new thumbnail.
-     *
-     * @param mixed $thumbnail The new thumbnail to replace the existing one.
-     * @param mixed $post The post whose thumbnail needs to be replaced.
-     * @return string The path of the newly stored thumbnail.
-     */
-    public function replaceThumbnail($thumbnail, $post)
-    {
-        Storage::delete($post->thumbnail);
-        $thumbnailPath = $thumbnail->store('thumbnail', 'public');
-        return $thumbnailPath;
     }
 
     /**
@@ -229,9 +220,8 @@ class PostService
      */
     public function createPost(array $validatedAttributes)
     {
-        $thumbnailPath = $this->uploadThumbnail($validatedAttributes['thumbnail']);
-        $validatedAttributes['thumbnail'] = $thumbnailPath;
-        $validatedAttributes['user_id'] = Auth::id();
+        $validatedAttributes['thumbnail'] = $this->uploadThumbnail($validatedAttributes['thumbnail']);
+        $validatedAttributes['user_id'] = $this->authHelper->getAuthenticatedUserId();
 
         $post = $this->postRepository->createPost(Arr::except($validatedAttributes, 'categories'));
 
@@ -263,5 +253,38 @@ class PostService
         if (!empty($categories)) {
             $this->tagsSync($categories, $post);
         }
+    }
+
+    /**
+     * Updates a post with the given validated attributes.
+     *
+     * @param array $validatedAttributes The validated attributes to update the post with.
+     * @param mixed $post The post to be updated.
+     * @return void
+     */
+    public function updatePost(array $validatedAttributes, $post)
+    {
+        if (isset($validatedAttributes['thumbnail'])) {
+            $validatedAttributes['thumbnail'] = $this->replaceThumbnail($validatedAttributes['thumbnail'], $post);
+        }
+
+        $this->postRepository->updatePost($post, Arr::except($validatedAttributes, 'categories'));
+
+        $this->syncCategories($validatedAttributes['categories'] ?? [], $post);
+    }
+
+    /**
+     * Replaces the thumbnail of a post with a new thumbnail.
+     *
+     * @param mixed $thumbnail The new thumbnail to replace the existing one.
+     * @param Post $post The post object whose thumbnail needs to be replaced.
+     * @return mixed The result of the uploadThumbnail() method.
+     */
+    public function replaceThumbnail($thumbnail, $post)
+    {
+        if ($post->thumbnail) {
+            Storage::delete($post->thumbnail);
+        }
+        return $this->uploadThumbnail($thumbnail);
     }
 }

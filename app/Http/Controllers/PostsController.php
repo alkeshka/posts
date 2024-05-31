@@ -10,8 +10,6 @@ use App\Repositories\PostRepository;
 use App\Services\FilterService;
 use App\Services\PostService;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
 
 class PostsController extends Controller
@@ -64,8 +62,7 @@ class PostsController extends Controller
      */
     public function store(StorePostRequest $request)
     {
-        $validatedAttributes = $request->validated();
-        $this->postService->createPost($validatedAttributes);
+        $this->postService->createPost($request->validated());
 
         $status = [
             'message' => 'Post created successfully!',
@@ -98,17 +95,12 @@ class PostsController extends Controller
      */
     public function update(UpdatePostRequest $request, Posts $post)
     {
-        $validatedAttributes = $request->validated();
+        $this->postService->updatePost($request->validated(), $post);
 
-        if ($request->hasFile('thumbnail')) {
-            $validatedAttributes['thumbnail'] = $this->postService->replaceThumbnail($request->thumbnail, $post);
-        }
-
-        $post->update(Arr::except($validatedAttributes, 'categories'));
-
-        $this->postService->tagsSync($validatedAttributes['categories'], $post);
-
-        return redirect('/');
+        return redirect('/')->with('status', [
+            'message' => 'Post updated successfully!',
+            'type' => 'success'
+        ]);
     }
 
     /**

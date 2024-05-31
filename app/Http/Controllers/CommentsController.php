@@ -40,8 +40,7 @@ class CommentsController extends Controller
      */
     public function store(StoreCommentRequest $request)
     {
-        $validatedAttributes = $request->validated();
-        $status = $this->commentService->createComment($validatedAttributes);
+        $status = $this->commentService->createComment($request->validated());
 
         return redirect()->back()->with('status', $status);
     }
