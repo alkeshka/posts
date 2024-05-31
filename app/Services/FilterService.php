@@ -31,10 +31,10 @@ class FilterService
      * @param mixed $author The author ID to filter by. If null or empty string, no filter is applied.
      * @return mixed The filtered post query.
      */
-    public function applyAuthorFilter($postQuery, $author)
+    public function applyAuthorFilter($postQuery, $authors)
     {
-        if ($author && $author != '') {
-            $postQuery->where('user_id', $author);
+        if (!empty($authors)) {
+            $postQuery->whereIn('user_id', $authors);
         }
         return $postQuery;
     }

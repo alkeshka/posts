@@ -8,6 +8,7 @@ use App\Models\Posts;
 use App\Models\User;
 use App\Services\FilterService;
 use App\Services\PostService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
@@ -36,11 +37,7 @@ class PostsController extends Controller
      */
     public function index()
     {
-        $postAuthors = $this->postService->getPostAuthors();
-
-        return view('posts.index', [
-            'postAuthors' => $postAuthors,
-        ]);
+        return view('posts.index');
     }
 
     /**
@@ -121,5 +118,11 @@ class PostsController extends Controller
         return response()->json($jsonData);
     }
 
+    public function getPostAuthors(Request $request): JsonResponse
+    {
+        $searchTerm = $request->input('search', '');
+        $authors = $this->postService->getPostAuthors($searchTerm);
 
+        return response()->json($authors);
+    }
 }

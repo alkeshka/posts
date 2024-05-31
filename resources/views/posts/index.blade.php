@@ -6,7 +6,7 @@
         <x-flash-messages message="{{ session('status')['message'] }}" class="{{ session('status')['type'] }}" ></x-flash-messages>
     @endif
 
-    <x-post-filters :postAuthors="$postAuthors" />
+    <x-post-filters />
 
     <x-posts-table />
 

@@ -70,6 +70,34 @@ $(document).ready(function () {
         multiple: true // Enable multi-select
     });
 
+    $('#author').select2({
+        ajax: {
+            url: '/author', // Replace '/tags' with your route for fetching tags
+            dataType: 'json',
+            delay: 250,
+            data: function (params) {
+                return {
+                    search: params.term
+                };
+            },
+            processResults: function (data) {
+                return {
+                    results: data.map(function (user) {
+                        return {
+                            id: user.id,
+                            text: user.first_name + " " + user.last_name
+                        };
+                    })
+                };
+            },
+            cache: true
+        },
+        placeholder: 'Select authors',
+        minimumInputLength: 0, // Allows searching with no minimum input length
+        multiple: true // Enable multi-select
+    });
+
+
     function closeModal() {
         $('#modal').addClass('hidden');
     }

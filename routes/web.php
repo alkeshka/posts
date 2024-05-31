@@ -38,5 +38,7 @@ Route::get('/posts/data', [PostsController::class, 'getPostsData'])->name('posts
 Route::get('/posts/{post}', [PostsController::class, 'show'])->name('view');
 Route::get('/comments/{post:id}', [CommentsController::class, 'index']);
 
-Route::get('/tags/{tags}',[TagsController::class, 'getAssociatedPosts'])->name('tags');
-Route::get('/tags',[TagsController::class, 'index']);
+Route::get('/tags/{tags}', [TagsController::class, 'getAssociatedPosts'])->name('tags');
+Route::get('/tags', [TagsController::class, 'index']);
+
+Route::get('/author', [PostsController::class, 'getPostAuthors']);

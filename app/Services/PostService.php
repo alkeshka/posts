@@ -55,12 +55,9 @@ class PostService
      *
      * @return \Illuminate\Database\Eloquent\Collection The collection of post authors.
      */
-    public function getPostAuthors()
+    public function getPostAuthors($searchTerm)
     {
-        $cacheKey = 'postAuthors';
-        return Cache::remember($cacheKey, 60, function () {
-            return User::postAuthors()->get();
-        });
+        return $this->postRepository->getPostAuthorsBySearchTerm($searchTerm);
     }
 
     /**

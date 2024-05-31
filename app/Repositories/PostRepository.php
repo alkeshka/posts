@@ -108,14 +108,20 @@ class PostRepository implements PostRepositoryInterface
         $limit = $request->input('length');
         $start = $request->input('start');
         $posts = $postLists->offset($start)
-        ->limit($limit)
-        ->get();
+                    ->limit($limit)
+                    ->get();
 
         return $posts;
     }
 
-    public function getPosts($id)
+    public function getPostAuthorsBySearchTerm($searchTerm)
     {
-        //return post find of 1
+        return User::whereHas('posts', function ($query) use ($searchTerm) {
+            $query->where('first_name', 'like', '%' . $searchTerm . '%')
+                ->orWhere('last_name', 'like', '%' . $searchTerm . '%');
+        })
+        ->select('id', 'first_name', 'last_name')
+        ->get();
     }
+
 }
