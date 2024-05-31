@@ -8,7 +8,6 @@ use App\Models\User;
 use App\Repositories\PostRepository;
 use App\Repositories\TagRepository;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 
 class PostService
