@@ -47,15 +47,18 @@ class FilterService
      * @return mixed The filtered post query.
      */
 
-    public function applyTagFilter($postQuery, $category)
+    protected function applyTagFilter($postQuery, $tagIds)
     {
-        if ($category !== null && $category !== '') {
-            $postQuery->whereHas('tags', function ($q) use ($category) {
-                $q->where('tags.id', $category);
-            });
+        if (!empty($tagIds)) {
+            foreach ($tagIds as $tagId) {
+                $postQuery->whereHas('tags', function ($q) use ($tagId) {
+                    $q->where('tags.id', $tagId);
+                });
+            }
         }
         return $postQuery;
     }
+
 
     /**
      * Apply the comment count filter to the post query.

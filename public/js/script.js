@@ -43,6 +43,32 @@ function loadComments() {
 }
 
 $(document).ready(function () {
+    $('#category').select2({
+        ajax: {
+            url: '/tags', // Replace '/tags' with your route for fetching tags
+            dataType: 'json',
+            delay: 250,
+            data: function (params) {
+                return {
+                    search: params.term
+                };
+            },
+            processResults: function (data) {
+                return {
+                    results: data.map(function (tag) {
+                        return {
+                            id: tag.id,
+                            text: tag.name
+                        };
+                    })
+                };
+            },
+            cache: true
+        },
+        placeholder: 'Select tags',
+        minimumInputLength: 0, // Allows searching with no minimum input length
+        multiple: true // Enable multi-select
+    });
 
     function closeModal() {
         $('#modal').addClass('hidden');

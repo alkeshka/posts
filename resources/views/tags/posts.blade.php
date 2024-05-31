@@ -50,7 +50,7 @@
                             {{ $post->tags->pluck('name')->implode(', ') }}
                         </td>
                         <td class="px-6 py-4">
-                            {{ $post->created_at->format('d/m/Y') }}
+                            {{ $post->created_at}}
                         </td>
                         <td class="px-6 py-4 space-x-2">
                             <a href="/posts/{{ $post->id }}" class="font-medium text-blue-600 text-blue-500 hover:underline">
