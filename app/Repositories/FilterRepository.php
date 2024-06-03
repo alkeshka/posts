@@ -28,7 +28,6 @@ class FilterRepository
      * @param mixed $category The category Name to filter by. If null or empty string, no filter is applied.
      * @return mixed The filtered post query.
      */
-
     public function applyTagFilter($postQuery, $tagIds)
     {
         if (!empty($tagIds)) {
@@ -88,8 +87,8 @@ class FilterRepository
     public function applyPublishedDateFilter($postQuery, $publishedDateRangeStart, $publishedDateRangeEnd)
     {
         if (!is_null($publishedDateRangeStart) && !is_null($publishedDateRangeEnd)) {
-            $startDate = Carbon::parse($publishedDateRangeStart);
-            $endDate = Carbon::parse($publishedDateRangeEnd);
+            $startDate = Carbon::parse($publishedDateRangeStart)->startOfDay();
+            $endDate = Carbon::parse($publishedDateRangeEnd)->endOfDay();
             $postQuery->whereBetween('created_at', [$startDate, $endDate]);
         }
         return $postQuery;

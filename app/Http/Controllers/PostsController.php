@@ -118,6 +118,12 @@ class PostsController extends Controller
         return response()->json($jsonData);
     }
 
+    /**
+     * Retrieves the authors of posts based on the search term from the request and returns them as a JSON response.
+     *
+     * @param Request $request The HTTP request object containing the search term.
+     * @return JsonResponse The JSON response containing the authors of posts.
+     */
     public function getPostAuthors(Request $request): JsonResponse
     {
         $searchTerm = $request->input('search', '');

@@ -20,14 +20,18 @@ class TagsController extends Controller
     {
         $this->tagService = $tagService;
     }
-
+    
+    /**
+     * Retrieves tags based on the search term from the request and returns them as a JSON response.
+     *
+     * @param Request $request The HTTP request object containing the search term.
+     * @return JsonResponse The JSON response containing the tags.
+     */
     public function index(Request $request)
     {
-        // Fetch tags based on the search term
         $search = $request->search ?? '';
-        $tags = Tags::where('name', 'like', "%$search%")->get();
+        $tags = $this->tagService->getTags($search);
 
-        // Return tags as JSON response
         return response()->json($tags);
     }
 

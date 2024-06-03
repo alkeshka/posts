@@ -113,7 +113,13 @@ class PostRepository implements PostRepositoryInterface
 
         return $posts;
     }
-
+    
+    /**
+     * Retrieves the authors of posts based on the search term.
+     *
+     * @param string $searchTerm The search term to filter the authors by.
+     * @return \Illuminate\Database\Eloquent\Collection The collection of authors matching the search term.
+     */
     public function getPostAuthorsBySearchTerm($searchTerm)
     {
         return User::whereHas('posts', function ($query) use ($searchTerm) {
