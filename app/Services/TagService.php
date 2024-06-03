@@ -7,7 +7,7 @@ use App\Repositories\TagRepository;
 class TagService
 {
     protected $tagRepository;
-    
+
     /**
      * Constructs a new instance of the class.
      *

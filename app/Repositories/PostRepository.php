@@ -103,17 +103,20 @@ class PostRepository implements PostRepositoryInterface
      * @param Builder $postLists The query builder for the post list.
      * @return Collection The paginated list of posts.
      */
-    public function paginatePosts($request, $postLists)
+    public function paginatePosts($postLists, $request)
     {
-        $limit = $request->input('length');
-        $start = $request->input('start');
-        $posts = $postLists->offset($start)
-                    ->limit($limit)
-                    ->get();
+        $limit = $request->input('length', 10);
+        $start = $request->input('start', 0);
+
+        $limit = is_numeric($limit) && $limit > 0 ? (int) $limit : 10;
+        $start = is_numeric($start) && $start >= 0 ? (int) $start : 0;
+
+        $posts = $postLists->offset($start)->limit($limit)->get();
 
         return $posts;
     }
-    
+
+
     /**
      * Retrieves the authors of posts based on the search term.
      *

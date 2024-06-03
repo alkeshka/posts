@@ -20,7 +20,7 @@ class TagsController extends Controller
     {
         $this->tagService = $tagService;
     }
-    
+
     /**
      * Retrieves tags based on the search term from the request and returns them as a JSON response.
      *

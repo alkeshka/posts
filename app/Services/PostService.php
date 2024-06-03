@@ -83,7 +83,7 @@ class PostService
         $totalPostsCount    = $postLists->count();
         $sortedPosts        = $this->postRepository->applySorting($postLists, $request);
         $filteredPosts      = $this->filterService->applyFilters($sortedPosts, $request);
-        $paginatedPosts     = $this->postRepository->paginatePosts($request, $filteredPosts);
+        $paginatedPosts     = $this->postRepository->paginatePosts($filteredPosts, $request);
         $formattedData      = $this->formatData($paginatedPosts);
         $filteredPostsCount = $filteredPosts->count();
 

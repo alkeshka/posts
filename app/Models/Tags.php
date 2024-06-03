@@ -26,7 +26,7 @@ class Tags extends Model
     protected $casts = [
         'id' => 'integer',
     ];
-    
+
     /**
      * Retrieve the posts associated with this tag.
      *

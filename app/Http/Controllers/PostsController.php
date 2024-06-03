@@ -27,7 +27,7 @@ class PostsController extends Controller
     public function __construct(
         PostService $postService,
         FilterService $filterService
-   ) {
+    ) {
         $this->postService = $postService;
         $this->filterService = $filterService;
     }
